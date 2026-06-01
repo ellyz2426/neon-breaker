@@ -226,6 +226,45 @@
         "dataUid": "uid-18"
       },
       {
+        "sourceTag": "text",
+        "type": "custom",
+        "children": [
+          "Paddle Abilities:"
+        ],
+        "properties": {
+          "id": "tut-17",
+          "fontsize": "10",
+          "color": "#00ff88"
+        },
+        "dataUid": "uid-19"
+      },
+      {
+        "sourceTag": "text",
+        "type": "custom",
+        "children": [
+          "DASH (Shift): Quick burst in movement direction"
+        ],
+        "properties": {
+          "id": "tut-18",
+          "fontsize": "9",
+          "color": "#44ffaa"
+        },
+        "dataUid": "uid-20"
+      },
+      {
+        "sourceTag": "text",
+        "type": "custom",
+        "children": [
+          "SLAM (X): Shockwave damages nearby bricks"
+        ],
+        "properties": {
+          "id": "tut-19",
+          "fontsize": "9",
+          "color": "#ff4488"
+        },
+        "dataUid": "uid-21"
+      },
+      {
         "sourceTag": "row",
         "type": "custom",
         "children": [
@@ -243,7 +282,7 @@
               "backgroundcolor": "#00ffff",
               "padding": "8"
             },
-            "dataUid": "uid-20"
+            "dataUid": "uid-23"
           },
           {
             "sourceTag": "text",
@@ -258,14 +297,14 @@
               "color": "#00ffff",
               "padding": "8"
             },
-            "dataUid": "uid-21"
+            "dataUid": "uid-24"
           }
         ],
         "properties": {
           "gap": "12",
           "justifycontent": "center"
         },
-        "dataUid": "uid-19"
+        "dataUid": "uid-22"
       }
     ],
     "properties": {},
@@ -279,7 +318,7 @@
         "column": 0
       },
       "end": {
-        "line": 24,
+        "line": 27,
         "column": 8
       }
     },
@@ -459,27 +498,57 @@
         "column": 4
       },
       "end": {
-        "line": 22,
-        "column": 10
+        "line": 19,
+        "column": 76
       }
     },
     "uid-20": {
       "start": {
         "line": 20,
-        "column": 6
+        "column": 4
       },
       "end": {
         "line": 20,
-        "column": 133
+        "column": 107
       }
     },
     "uid-21": {
       "start": {
         "line": 21,
-        "column": 6
+        "column": 4
       },
       "end": {
         "line": 21,
+        "column": 101
+      }
+    },
+    "uid-22": {
+      "start": {
+        "line": 22,
+        "column": 4
+      },
+      "end": {
+        "line": 25,
+        "column": 10
+      }
+    },
+    "uid-23": {
+      "start": {
+        "line": 23,
+        "column": 6
+      },
+      "end": {
+        "line": 23,
+        "column": 133
+      }
+    },
+    "uid-24": {
+      "start": {
+        "line": 24,
+        "column": 6
+      },
+      "end": {
+        "line": 24,
         "column": 101
       }
     }
