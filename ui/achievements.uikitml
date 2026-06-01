@@ -1,0 +1,32 @@
+<style>
+  .panel { display: flex; flex-direction: column; align-items: center; padding-top: 2; padding-bottom: 2; padding-left: 3; padding-right: 3; background-color: rgba(0,0,0,0.85); border-color: #ffd700; border-width: 0.15; border-radius: 1.5; }
+  .heading { font-size: 3; color: #ffd700; font-weight: bold; margin-bottom: 1.5; }
+  .row { font-size: 1.1; color: #cccccc; margin-top: 0.2; }
+  .unlocked { color: #00ff88; }
+  .btn-back { display: flex; justify-content: center; align-items: center; padding-top: 0.6; padding-bottom: 0.6; padding-left: 2; padding-right: 2; margin-top: 1.5; background-color: rgba(255,255,255,0.05); border-color: #666666; border-width: 0.05; border-radius: 0.6; cursor: pointer; }
+  .back-text { font-size: 1.5; color: #888888; }
+</style>
+<div class="panel">
+  <span class="heading">ACHIEVEMENTS</span>
+  <span id="ach-0" class="row">[ ] First Break</span>
+  <span id="ach-1" class="row">[ ] Brick Buster</span>
+  <span id="ach-2" class="row">[ ] Demolition Expert</span>
+  <span id="ach-3" class="row">[ ] Combo Starter</span>
+  <span id="ach-4" class="row">[ ] Combo Master</span>
+  <span id="ach-5" class="row">[ ] Combo Legend</span>
+  <span id="ach-6" class="row">[ ] Ten Grand</span>
+  <span id="ach-7" class="row">[ ] High Roller</span>
+  <span id="ach-8" class="row">[ ] Century Club</span>
+  <span id="ach-9" class="row">[ ] Ball Storm</span>
+  <span id="ach-10" class="row">[ ] Power Hungry</span>
+  <span id="ach-11" class="row">[ ] Perfect Level</span>
+  <span id="ach-12" class="row">[ ] Through the Fire</span>
+  <span id="ach-13" class="row">[ ] Chain Reaction</span>
+  <span id="ach-14" class="row">[ ] Gold Rush</span>
+  <span id="ach-15" class="row">[ ] Sharpshooter</span>
+  <span id="ach-16" class="row">[ ] Safety Net</span>
+  <span id="ach-17" class="row">[ ] Speed Demon</span>
+  <span id="ach-18" class="row">[ ] Decorator</span>
+  <span id="ach-19" class="row">[ ] Endurance</span>
+  <div id="btn-back" class="btn-back"><span class="back-text">BACK</span></div>
+</div>

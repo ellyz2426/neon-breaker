@@ -1,0 +1,32 @@
+<style>
+  .panel { display: flex; flex-direction: column; align-items: center; padding-top: 3; padding-bottom: 3; padding-left: 4; padding-right: 4; background-color: rgba(0,0,0,0.9); border-color: #ff4444; border-width: 0.15; border-radius: 1.5; }
+  .heading { font-size: 4; color: #ff4444; font-weight: bold; margin-bottom: 1; }
+  .stat-row { display: flex; flex-direction: row; justify-content: space-between; margin-top: 0.4; min-width: 20; }
+  .stat-label { font-size: 1.6; color: #888888; }
+  .stat-value { font-size: 1.6; color: #ffffff; font-weight: bold; }
+  .btn { display: flex; justify-content: center; align-items: center; padding-top: 1; padding-bottom: 1; padding-left: 3; padding-right: 3; margin-top: 1; background-color: rgba(0,255,255,0.15); border-color: #00ffff; border-width: 0.08; border-radius: 0.8; cursor: pointer; min-width: 14; }
+  .btn-text { font-size: 2; color: #00ffff; font-weight: bold; }
+  .btn-quit { background-color: rgba(255,255,255,0.05); border-color: #666666; }
+  .quit-text { font-size: 1.6; color: #888888; }
+</style>
+<div class="panel">
+  <span id="title-text" class="heading">GAME OVER</span>
+  <div class="stat-row">
+    <span class="stat-label">SCORE</span>
+    <span id="score-val" class="stat-value">0</span>
+  </div>
+  <div class="stat-row">
+    <span class="stat-label">LEVEL</span>
+    <span id="level-val" class="stat-value">1</span>
+  </div>
+  <div class="stat-row">
+    <span class="stat-label">BRICKS</span>
+    <span id="bricks-val" class="stat-value">0</span>
+  </div>
+  <div class="stat-row">
+    <span class="stat-label">COMBO</span>
+    <span id="combo-val" class="stat-value">x0</span>
+  </div>
+  <div id="btn-rematch" class="btn"><span class="btn-text">REMATCH</span></div>
+  <div id="btn-title" class="btn btn-quit"><span class="quit-text">TITLE</span></div>
+</div>

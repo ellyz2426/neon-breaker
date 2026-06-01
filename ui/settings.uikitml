@@ -1,0 +1,41 @@
+<style>
+  .panel { display: flex; flex-direction: column; align-items: center; padding-top: 2; padding-bottom: 2; padding-left: 3; padding-right: 3; background-color: rgba(0,0,0,0.85); border-color: #00ffff; border-width: 0.15; border-radius: 1.5; }
+  .heading { font-size: 3; color: #00ffff; font-weight: bold; margin-bottom: 1.5; }
+  .setting-row { display: flex; flex-direction: row; align-items: center; justify-content: space-between; margin-top: 0.6; min-width: 22; }
+  .setting-label { font-size: 1.6; color: #aaaaaa; }
+  .setting-value { font-size: 1.6; color: #ffffff; font-weight: bold; margin-left: 1; margin-right: 1; min-width: 5; }
+  .btn-vol { display: flex; justify-content: center; align-items: center; padding-top: 0.4; padding-bottom: 0.4; padding-left: 1; padding-right: 1; background-color: rgba(0,255,255,0.12); border-color: #00ffff; border-width: 0.05; border-radius: 0.4; cursor: pointer; }
+  .vol-text { font-size: 1.4; color: #00ffff; }
+  .theme-row { display: flex; flex-direction: row; align-items: center; justify-content: center; margin-top: 1; }
+  .theme-label { font-size: 1.6; color: #aaaaaa; margin-right: 1; }
+  .theme-name { font-size: 1.6; color: #ffffff; font-weight: bold; min-width: 12; }
+  .btn-back { display: flex; justify-content: center; align-items: center; padding-top: 0.6; padding-bottom: 0.6; padding-left: 2; padding-right: 2; margin-top: 1.5; background-color: rgba(255,255,255,0.05); border-color: #666666; border-width: 0.05; border-radius: 0.6; cursor: pointer; }
+  .back-text { font-size: 1.5; color: #888888; }
+</style>
+<div class="panel">
+  <span class="heading">SETTINGS</span>
+  <div class="setting-row">
+    <span class="setting-label">MASTER</span>
+    <div id="btn-master-down" class="btn-vol"><span class="vol-text">-</span></div>
+    <span id="master-val" class="setting-value">70%</span>
+    <div id="btn-master-up" class="btn-vol"><span class="vol-text">+</span></div>
+  </div>
+  <div class="setting-row">
+    <span class="setting-label">SFX</span>
+    <div id="btn-sfx-down" class="btn-vol"><span class="vol-text">-</span></div>
+    <span id="sfx-val" class="setting-value">80%</span>
+    <div id="btn-sfx-up" class="btn-vol"><span class="vol-text">+</span></div>
+  </div>
+  <div class="setting-row">
+    <span class="setting-label">MUSIC</span>
+    <div id="btn-music-down" class="btn-vol"><span class="vol-text">-</span></div>
+    <span id="music-val" class="setting-value">50%</span>
+    <div id="btn-music-up" class="btn-vol"><span class="vol-text">+</span></div>
+  </div>
+  <div class="theme-row">
+    <div id="btn-theme-prev" class="btn-vol"><span class="vol-text">&lt;</span></div>
+    <span id="theme-val" class="theme-name">Neon Holodeck</span>
+    <div id="btn-theme-next" class="btn-vol"><span class="vol-text">&gt;</span></div>
+  </div>
+  <div id="btn-back" class="btn-back"><span class="back-text">BACK</span></div>
+</div>

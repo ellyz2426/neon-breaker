@@ -1,0 +1,7 @@
+<style>
+  .toast { display: flex; justify-content: center; align-items: center; padding-top: 0.5; padding-bottom: 0.5; padding-left: 2; padding-right: 2; background-color: rgba(0,0,0,0.75); border-color: #00ff88; border-width: 0.08; border-radius: 0.5; }
+  .toast-text { font-size: 1.6; color: #00ff88; font-weight: bold; }
+</style>
+<div class="toast">
+  <span id="toast-text" class="toast-text">Achievement!</span>
+</div>

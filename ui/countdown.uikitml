@@ -1,0 +1,7 @@
+<style>
+  .countdown { display: flex; justify-content: center; align-items: center; padding-top: 1; padding-bottom: 1; padding-left: 2; padding-right: 2; background-color: rgba(0,0,0,0.6); border-radius: 1; }
+  .count { font-size: 8; color: #00ffff; font-weight: bold; }
+</style>
+<div class="countdown">
+  <span id="count-val" class="count">3</span>
+</div>

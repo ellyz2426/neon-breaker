@@ -1,0 +1,37 @@
+<style>
+  .panel { display: flex; flex-direction: column; padding-top: 2; padding-bottom: 2; padding-left: 3; padding-right: 3; background-color: rgba(0,0,0,0.85); border-color: #00ffff; border-width: 0.15; border-radius: 1.5; }
+  .heading { font-size: 3; color: #00ffff; font-weight: bold; margin-bottom: 1; }
+  .section { font-size: 1.8; color: #ffaa00; margin-top: 1; margin-bottom: 0.3; font-weight: bold; }
+  .text { font-size: 1.2; color: #cccccc; margin-top: 0.2; }
+  .btn-back { display: flex; justify-content: center; align-items: center; padding-top: 0.6; padding-bottom: 0.6; padding-left: 2; padding-right: 2; margin-top: 1.5; background-color: rgba(255,255,255,0.05); border-color: #666666; border-width: 0.05; border-radius: 0.6; cursor: pointer; }
+  .back-text { font-size: 1.5; color: #888888; }
+</style>
+<div class="panel">
+  <span class="heading">HOW TO PLAY</span>
+  <span class="section">Browser Controls</span>
+  <span class="text">Mouse: Move paddle left/right</span>
+  <span class="text">A/D or Arrows: Move paddle</span>
+  <span class="text">Click: Release magnet / Fire laser</span>
+  <span class="text">ESC: Pause</span>
+  <span class="section">VR Controls</span>
+  <span class="text">Right Controller: Move paddle</span>
+  <span class="text">Trigger: Release magnet / Fire laser</span>
+  <span class="text">B: Pause</span>
+  <span class="text">Laser Pointer: UI interaction</span>
+  <span class="section">Brick Types</span>
+  <span class="text">Normal (cyan): 1 hit, 100 pts</span>
+  <span class="text">Tough (magenta): 2 hits, 200 pts</span>
+  <span class="text">Armored (green): 3 hits, 300 pts</span>
+  <span class="text">Explosive (orange): Destroys neighbors</span>
+  <span class="text">Golden (gold): Always drops power-up</span>
+  <span class="text">Indestructible (gray): Cannot break</span>
+  <span class="section">Power-Ups</span>
+  <span class="text">Multi-Ball: Splits into 3 balls</span>
+  <span class="text">Wide Paddle: 1.5x wider (15s)</span>
+  <span class="text">Laser: Shoot bricks (10s)</span>
+  <span class="text">Shield: Floor barrier (1 use)</span>
+  <span class="text">Magnet: Ball sticks to paddle</span>
+  <span class="text">Slow-Mo: Ball speed -30% (12s)</span>
+  <span class="text">Fireball: Ball passes through (8s)</span>
+  <div id="btn-back" class="btn-back"><span class="back-text">BACK</span></div>
+</div>

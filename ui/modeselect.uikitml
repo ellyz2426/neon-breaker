@@ -1,0 +1,29 @@
+<style>
+  .panel { display: flex; flex-direction: column; align-items: center; padding-top: 3; padding-bottom: 3; padding-left: 4; padding-right: 4; background-color: rgba(0,0,0,0.85); border-color: #00ffff; border-width: 0.15; border-radius: 1.5; }
+  .heading { font-size: 3.5; color: #00ffff; font-weight: bold; margin-bottom: 2; }
+  .btn { display: flex; flex-direction: column; align-items: center; padding-top: 1; padding-bottom: 1; padding-left: 3; padding-right: 3; margin-top: 0.8; background-color: rgba(0,255,255,0.12); border-color: #00ffff; border-width: 0.08; border-radius: 0.8; cursor: pointer; min-width: 20; }
+  .btn-name { font-size: 2.2; color: #00ffff; font-weight: bold; }
+  .btn-desc { font-size: 1.2; color: #888888; }
+  .btn-back { display: flex; justify-content: center; align-items: center; padding-top: 0.6; padding-bottom: 0.6; padding-left: 2; padding-right: 2; margin-top: 1.5; background-color: rgba(255,255,255,0.05); border-color: #666666; border-width: 0.05; border-radius: 0.6; cursor: pointer; }
+  .back-text { font-size: 1.5; color: #888888; }
+</style>
+<div class="panel">
+  <span class="heading">SELECT MODE</span>
+  <div id="btn-classic" class="btn">
+    <span class="btn-name">CLASSIC</span>
+    <span class="btn-desc">12 levels, 3 lives</span>
+  </div>
+  <div id="btn-endless" class="btn">
+    <span class="btn-name">ENDLESS</span>
+    <span class="btn-desc">Levels loop with rising difficulty</span>
+  </div>
+  <div id="btn-timeattack" class="btn">
+    <span class="btn-name">TIME ATTACK</span>
+    <span class="btn-desc">90 seconds, max score</span>
+  </div>
+  <div id="btn-zen" class="btn">
+    <span class="btn-name">ZEN</span>
+    <span class="btn-desc">Unlimited lives, relax</span>
+  </div>
+  <div id="btn-back" class="btn-back"><span class="back-text">BACK</span></div>
+</div>
