@@ -33,5 +33,12 @@
   <span class="text">Magnet: Ball sticks to paddle</span>
   <span class="text">Slow-Mo: Ball speed -30% (12s)</span>
   <span class="text">Fireball: Ball passes through (8s)</span>
+  <span class="text">Mega Ball: 3x ball size (10s)</span>
+  <span class="section">Paddle Abilities</span>
+  <span class="text">Dash (Shift): Quick speed burst, 0.8s CD</span>
+  <span class="text">Slam (X): Shockwave damages bricks, 2s CD</span>
+  <span class="section">Game Modes (8)</span>
+  <span class="text">Classic • Endless • Time Attack • Zen</span>
+  <span class="text">Daily • Survival • Practice • Boss Rush</span>
   <div id="btn-back" class="btn-back"><span class="back-text">BACK</span></div>
 </div>

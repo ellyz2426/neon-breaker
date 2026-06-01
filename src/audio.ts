@@ -196,6 +196,25 @@ export class AudioManager {
     this.playNoise(0.08, 0.1);
   }
 
+  playComboMilestone(combo: number) {
+    // Ascending fanfare scaled to combo level
+    const baseFreq = 440 + Math.min(combo, 100) * 5;
+    [0, 0.25, 0.5].forEach((mult, i) => {
+      setTimeout(() => this.playTone(baseFreq + mult * baseFreq, 0.12, 'sine', 0.2), i * 40);
+    });
+  }
+
+  playDash() {
+    this.playTone(800, 0.06, 'sawtooth', 0.15);
+    this.playTone(1200, 0.04, 'square', 0.1);
+  }
+
+  playSlam() {
+    this.playTone(100, 0.2, 'sawtooth', 0.25);
+    this.playNoise(0.15, 0.2);
+    this.playTone(60, 0.15, 'sine', 0.2);
+  }
+
   startMusic() {
     this.init();
     if (this.musicOsc) return;

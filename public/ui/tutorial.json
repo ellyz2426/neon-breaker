@@ -265,6 +265,32 @@
         "dataUid": "uid-21"
       },
       {
+        "sourceTag": "text",
+        "type": "custom",
+        "children": [
+          "Game Modes: Classic (48 levels), Endless, Time"
+        ],
+        "properties": {
+          "id": "tut-20",
+          "fontsize": "10",
+          "color": "#aa44ff"
+        },
+        "dataUid": "uid-22"
+      },
+      {
+        "sourceTag": "text",
+        "type": "custom",
+        "children": [
+          "Attack, Zen, Daily, Survival, Practice, Boss Rush"
+        ],
+        "properties": {
+          "id": "tut-21",
+          "fontsize": "10",
+          "color": "#aa44ff"
+        },
+        "dataUid": "uid-23"
+      },
+      {
         "sourceTag": "row",
         "type": "custom",
         "children": [
@@ -282,7 +308,7 @@
               "backgroundcolor": "#00ffff",
               "padding": "8"
             },
-            "dataUid": "uid-23"
+            "dataUid": "uid-25"
           },
           {
             "sourceTag": "text",
@@ -297,14 +323,14 @@
               "color": "#00ffff",
               "padding": "8"
             },
-            "dataUid": "uid-24"
+            "dataUid": "uid-26"
           }
         ],
         "properties": {
           "gap": "12",
           "justifycontent": "center"
         },
-        "dataUid": "uid-22"
+        "dataUid": "uid-24"
       }
     ],
     "properties": {},
@@ -318,7 +344,7 @@
         "column": 0
       },
       "end": {
-        "line": 27,
+        "line": 29,
         "column": 8
       }
     },
@@ -528,27 +554,47 @@
         "column": 4
       },
       "end": {
-        "line": 25,
-        "column": 10
+        "line": 22,
+        "column": 105
       }
     },
     "uid-23": {
       "start": {
         "line": 23,
-        "column": 6
+        "column": 4
       },
       "end": {
         "line": 23,
-        "column": 133
+        "column": 108
       }
     },
     "uid-24": {
       "start": {
         "line": 24,
+        "column": 4
+      },
+      "end": {
+        "line": 27,
+        "column": 10
+      }
+    },
+    "uid-25": {
+      "start": {
+        "line": 25,
         "column": 6
       },
       "end": {
-        "line": 24,
+        "line": 25,
+        "column": 133
+      }
+    },
+    "uid-26": {
+      "start": {
+        "line": 26,
+        "column": 6
+      },
+      "end": {
+        "line": 26,
         "column": 101
       }
     }

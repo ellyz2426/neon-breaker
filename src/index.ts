@@ -218,7 +218,7 @@ function updateComboVisuals(combo: number) {
   }
 
   // Spawn bonus particles at combo thresholds
-  if (combo === 10 || combo === 25 || combo === 50 || combo === 100) {
+  if (combo === 10 || combo === 25 || combo === 50 || combo === 100 || combo === 200 || combo === 300) {
     const theme = THEMES[gsm.selectedTheme];
     for (let i = 0; i < combo / 5; i++) {
       spawnParticles(
@@ -228,6 +228,7 @@ function updateComboVisuals(combo: number) {
       );
     }
     triggerScreenShake(0.005 + combo * 0.0002);
+    audio.playComboMilestone(combo);
   }
 }
 
@@ -1915,7 +1916,7 @@ function setupInputListeners() {
       dashTrailTimer = 0;
       gsm.dashCount++;
       if (gsm.dashCount >= 50) checkAchievement('dash_50');
-      audio.playWallBounce(); // reuse bounce as dash sfx
+      audio.playDash();
     }
     // Paddle slam — X key
     if ((e.key === 'x' || e.key === 'X') && gsm.state === 'playing' && slamCooldown <= 0) {
@@ -1924,7 +1925,7 @@ function setupInputListeners() {
       slamCooldown = 2.0;
       gsm.slamCount++;
       if (gsm.slamCount >= 25) checkAchievement('slam_25');
-      audio.playPaddleHit();
+      audio.playSlam();
       triggerScreenShake(0.008);
     }
   });
