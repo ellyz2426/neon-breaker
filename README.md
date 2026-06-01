@@ -1,104 +1,60 @@
 # Neon Breaker VR
 
-A holodeck-style brick breaker game built with [IWSDK](https://iwsdk.dev) 0.4.1. Playable in VR headsets and desktop browsers.
+A holodeck brick-breaker game built with IWSDK 0.4.1 — dual-runtime VR + browser.
 
-🎮 **[Play Now](https://ellyz2426.github.io/neon-breaker/)**
+**[Play Now](https://ellyz2426.github.io/neon-breaker/)**
 
 ## Features
 
-### Core Gameplay
-- Custom brick-breaker physics with precise paddle collision response
-- 6 brick types: Normal, Tough (2HP), Armored (3HP), Explosive (chain reactions), Indestructible, Golden (always drops power-up)
-- 7 power-ups: Multi-Ball, Wide Paddle, Laser, Shield, Magnet, Slow-Mo, Fireball
-- Combo scoring up to x10 multiplier with visual feedback
+### 7 Game Modes
+- **Classic** — 36 handcrafted levels across 3 zones, 3 lives, boss battles
+- **Endless** — Levels loop with rising difficulty
+- **Time Attack** — 90 seconds, maximum score
+- **Zen** — Unlimited lives, relax and play
+- **Daily Challenge** — Date-seeded random level, 2x XP bonus
+- **Survival** — Wave-based endless mode, 1 life, escalating difficulty (1.8x XP)
+- **Practice** — Replay any unlocked level (no XP)
 
-### 36 Handcrafted Levels (3 Zones)
-- **Zone 1** (Levels 1-12): Classic formations — Checkerboard, Diamond, Fortress, Spiral, Minefield
-- **Zone 2** (Levels 13-24): Advanced patterns — Hourglass, Cross, Maze, Castle, Mirror, Omega
-- **Zone 3** (Levels 25-36): Expert designs — Vortex, Fracture, DNA, Fortress II, Singularity
-
-### Boss Levels
-- Levels 12, 24, and 36 feature boss encounters with moving brick formations
-- Horizontal, vertical, and circular movement patterns
-- Unique boss intro/defeat audio cues and screen shake
-
-### 5 Game Modes
-- **Classic**: Progress through all 36 levels with 3 lives
-- **Endless**: Infinite looping levels, increasing speed
-- **Time Attack**: 90 seconds, maximize your score
-- **Zen**: 99 lives, pure relaxation
-- **Daily Challenge**: Seeded random level, 2x XP bonus
-
-### Challenge Modifiers
-- **Shrinking Paddle** (+30% XP): Paddle shrinks 5% with each brick destroyed
-- **Speed Surge** (+30% XP): Ball accelerates every 10 seconds
-- **No Power-Ups** (+40% XP): Power-ups disabled entirely
-- Stack all 3 for up to x2.4 XP multiplier
+### 8 Power-Ups
+- **Multi-Ball** — Splits into 3 balls
+- **Wide Paddle** — 1.5x wider for 15 seconds
+- **Laser** — Shoot lasers for 10 seconds
+- **Shield** — Floor safety net, 1 use
+- **Magnet** — Ball sticks to paddle
+- **Slow-Mo** — Ball speed -30% for 12 seconds
+- **Fireball** — Ball passes through bricks for 8 seconds
+- **Mega Ball** — Ball becomes 3x size for 10 seconds
 
 ### Progression System
 - 50 player levels with exponential XP curve
-- 8 ball skins (Neon Pulse, Plasma Orb, Void Sphere, Starfire, Nebula, Supernova, Cosmic)
-- 7 paddle skins (Hologram, Crystal, Ember, Aurora, Quantum, Singularity)
-- Skins unlock at specific progression levels
+- 8 ball skins + 7 paddle skins (progression-locked)
+- Career stats tracking
+- Per-mode best scores
 
-### 60 Achievements
-- Combo milestones (5x → 100x)
-- Score milestones (10K → 2M)
-- Boss defeats, modifier challenges, zone completions
-- Speed clears, perfect levels, daily challenges
-- Campaign completion, power-up chains, consecutive perfects
+### Content
+- 36 handcrafted levels in 3 zones (Zone 1–3)
+- 3 boss levels (L12, L24, L36) with moving brick formations
+- 6 brick types: Normal, Tough, Armored, Explosive, Golden, Indestructible
+- 8 arena themes
+- 3 challenge modifiers: Shrinking Paddle (+30% XP), Speed Surge (+30% XP), No Power-Ups (+40% XP)
+- 75 achievements
+- Interactive tutorial
+- Leaderboard with top 20 scores
 
-### Campaign Victory
-- Complete all 36 levels in Classic mode for a special victory celebration
-- 1.5x XP campaign bonus on completion
-- Fireworks, screen shake, boss defeat fanfare
+### Technical
+- Built with IWSDK 0.4.1 (dual-runtime: VR + browser)
+- 22 PanelUI `.uikitml` templates — zero HTML DOM overlays
+- All spatial UI: `PanelUI`, `Follower` (HUDs), `ScreenSpace`
+- XR controller support (laser pointer, trigger, grip)
+- Procedural Web Audio: 15+ SFX + arpeggiator synthwave music
+- Screen shake, combo visual escalation, particle effects
 
-### Active Power-Up HUD
-- Real-time display of active power-ups with countdown timers
-- Head-locked panel visible in VR and browser
-
-### Visual & Audio
-- 8 arena themes: Neon Holodeck, Crimson Grid, Toxic Neon, Ultra Violet, Solar Blaze, Frozen Abyss, Void Pulse, Emerald Matrix
-- Procedural Web Audio: 15+ SFX, evolving arpeggiator music, ambient drone
-- Screen shake on impacts and explosions
-- Particle effects, glow trails, wireframe decorations
-- Holodeck-style grid floor and ceiling
-
-### VR Support
-- Full dual-runtime: VR headsets (Quest, Vision Pro) and desktop browsers
-- XR controller input for paddle movement
-- Spatial PanelUI — all 18 `.uikitml` templates, zero HTML DOM overlays
-- Head-locked HUD for score, lives, and combo display
-
-## Controls
-
-### Desktop
-- **Mouse**: Move paddle
-- **A/D or Arrow Keys**: Move paddle
-- **Click**: Release magnet ball / Fire laser
-- **Escape**: Pause
-
-### VR
-- **Right Controller**: Move paddle
-- **Trigger**: Release magnet ball / Fire laser
-- **Laser Pointer**: Navigate menus
+### Controls
+- **Browser**: Mouse move / WASD / Arrow keys for paddle, Click for magnet release/laser
+- **VR**: Controller position for paddle, Trigger for actions
+- **Escape**: Pause/Resume
 
 ## Tech Stack
-
-- **IWSDK 0.4.1** — Meta's WebXR development framework
-- **TypeScript** — Full type safety
-- **PanelUI** — IWSDK's spatial UI system (`.uikitml` templates)
-- **Web Audio API** — Procedural sound synthesis
-- **Vite** — Build tooling with `@iwsdk/vite-plugin-dev` and `@iwsdk/vite-plugin-uikitml`
-
-## Development
-
-```bash
-npm install
-npx vite        # Dev server with hot reload
-npx vite build  # Production build
-```
-
-## License
-
-MIT
+- IWSDK 0.4.1 (`@iwsdk/core`, `@iwsdk/vite-plugin-dev`, `@iwsdk/vite-plugin-uikitml`)
+- TypeScript, Vite
+- Web Audio API (procedural synthesis)
