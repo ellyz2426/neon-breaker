@@ -146,6 +146,15 @@ interface LaserObj {
   active: boolean;
 }
 
+interface RingObj {
+  mesh: Mesh;
+  life: number;
+  maxLife: number;
+  active: boolean;
+}
+
+const ringEffects: RingObj[] = [];
+
 // ─── Skin Helpers ───
 function getCurrentBallSkin(): BallSkin {
   return BALL_SKINS.find(s => s.id === profile.selectedBallSkin) || BALL_SKINS[0];
@@ -712,6 +721,20 @@ function spawnParticles(x: number, y: number, color: string, count: number) {
   }
 }
 
+// ─── Ring Explosion VFX ───
+function spawnRingExplosion(x: number, y: number, color: string) {
+  const geo = new TorusGeometry(0.02, 0.004, 6, 16);
+  const mat = new MeshBasicMaterial({
+    color: new Color(color), transparent: true, opacity: 0.8,
+    blending: AdditiveBlending,
+  });
+  const mesh = new Mesh(geo, mat);
+  mesh.position.set(x, y, PADDLE_Z + 0.01);
+  mesh.rotation.x = Math.PI / 2;
+  world.scene.add(mesh);
+  ringEffects.push({ mesh, life: 0.4, maxLife: 0.4, active: true });
+}
+
 // ─── Laser ───
 function fireLaser() {
   const geo = new BoxGeometry(0.01, 0.15, 0.01);
@@ -771,7 +794,19 @@ function hitBrick(brick: BrickObj, ball?: BallObj) {
   } else {
     const mat = brick.mesh.material as MeshStandardMaterial;
     mat.emissiveIntensity = 1.2;
-    setTimeout(() => { mat.emissiveIntensity = 0.4; }, 100);
+    // Brick damage visualization: darken and reduce opacity based on remaining HP
+    const maxHP = BRICK_HP[brick.type];
+    const dmgRatio = 1 - brick.hp / maxHP; // 0 = undamaged, approaches 1 = almost dead
+    mat.roughness = 0.3 + dmgRatio * 0.4; // gets rougher with damage
+    const edgeMat = brick.edges.material as LineBasicMaterial;
+    edgeMat.opacity = 0.9 - dmgRatio * 0.3; // edges fade
+    // Brief flash + position jitter
+    const origX = brick.mesh.position.x;
+    brick.mesh.position.x = origX + (Math.random() - 0.5) * 0.01;
+    setTimeout(() => {
+      mat.emissiveIntensity = 0.4 - dmgRatio * 0.15;
+      brick.mesh.position.x = origX;
+    }, 80);
   }
 }
 
@@ -805,6 +840,7 @@ function destroyBrick(brick: BrickObj) {
     [BrickType.GOLDEN]: '#ffd700',
   };
   spawnParticles(brick.x, brick.y, colors[brick.type] || '#ffffff', 8);
+  spawnRingExplosion(brick.x, brick.y, colors[brick.type] || '#ffffff');
 
   if (brick.type === BrickType.EXPLOSIVE) {
     audio.playExplosion();
@@ -822,6 +858,7 @@ function destroyBrick(brick: BrickObj) {
     gsm.explosiveChains = Math.max(gsm.explosiveChains, chainCount);
     levelExplosiveChains++;
     if (chainCount >= 3) checkAchievement('explosive');
+    if (chainCount >= 8) checkAchievement('explosive_chain_8');
     if (levelExplosiveChains >= 5) checkAchievement('explosive_5');
   }
 
@@ -853,6 +890,7 @@ function destroyBrick(brick: BrickObj) {
   if (gsm.combo >= 50) checkAchievement('combo_50');
   if (gsm.combo >= 100) checkAchievement('combo_100');
   if (gsm.combo >= 200) checkAchievement('combo_200');
+  if (gsm.combo >= 300) checkAchievement('combo_300');
   if (gsm.score >= 10000) checkAchievement('score_10k');
   if (gsm.score >= 50000) checkAchievement('score_50k');
   if (gsm.score >= 100000) checkAchievement('score_100k');
@@ -1290,6 +1328,21 @@ function gameUpdate(dt: number) {
     }
   }
 
+  // Update ring effects
+  for (let i = ringEffects.length - 1; i >= 0; i--) {
+    const ring = ringEffects[i];
+    if (!ring.active) continue;
+    ring.life -= dt;
+    const progress = 1 - ring.life / ring.maxLife;
+    ring.mesh.scale.setScalar(1 + progress * 6);
+    (ring.mesh.material as MeshBasicMaterial).opacity = (1 - progress) * 0.8;
+    if (ring.life <= 0) {
+      ring.active = false;
+      world.scene.remove(ring.mesh);
+      ringEffects.splice(i, 1);
+    }
+  }
+
   // Time attack
   if (gsm.mode === 'timeattack') {
     const elapsed = (Date.now() - gsm.levelStartTime) / 1000;
@@ -1375,6 +1428,23 @@ function startLevel() {
     const levelIdx = ((gsm.practiceLevel - 1) % levels.length);
     levelData = levels[levelIdx];
     gsm.level = gsm.practiceLevel;
+  } else if (gsm.mode === 'bossrush') {
+    // Boss Rush: sequential boss fights
+    const bossKeys = [12, 24, 36, 48];
+    const bossIdx = gsm.bossRushIdx;
+    if (bossIdx < bossKeys.length) {
+      const bossKey = bossKeys[bossIdx];
+      const boss = bossLevels[bossKey];
+      levelData = { name: boss.name, rows: boss.rows, cols: boss.cols, grid: boss.grid };
+      currentBoss = boss;
+      brickGroup = new Group();
+      world.scene.add(brickGroup);
+      audio.playBossIntro();
+      showToast(`⚠ BOSS ${bossIdx + 1}/4: ${boss.name} ⚠`);
+    } else {
+      // All bosses defeated — handled in onLevelComplete
+      levelData = levels[0]; // fallback
+    }
   } else if (bossLevels[gsm.level]) {
     // Boss level
     const boss = bossLevels[gsm.level];
@@ -1522,6 +1592,61 @@ function onLevelComplete() {
   showUI('levelcomplete');
   updateLevelComplete();
 
+  // Boss Rush progression
+  if (gsm.mode === 'bossrush') {
+    gsm.bossRushIdx++;
+    gsm.bossRushBossesDefeatedThisRun++;
+    if (gsm.bossRushIdx >= 4) {
+      // All bosses defeated!
+      checkAchievement('boss_rush_clear');
+      if (gsm.ballsLost === 0) checkAchievement('boss_rush_no_miss');
+      const totalTime = (Date.now() - gameStartTime) / 1000;
+      if (totalTime < 300) checkAchievement('boss_rush_speed');
+      profile.gamesWon++;
+      const xpEarned = Math.floor(calculateGameXP(gsm.score, gsm.bricksDestroyed, 4, gsm.maxCombo, gsm.mode) * 2); // 2x boss rush XP
+      const oldLevel = profile.level;
+      profile.xp += xpEarned;
+      profile.level = getLevelFromXP(profile.xp);
+      profile.totalGames++;
+      profile.totalBricks += gsm.bricksDestroyed;
+      profile.totalScore += gsm.score;
+      profile.totalPlayTime += totalTime;
+      if (gsm.score > profile.bestScore) profile.bestScore = gsm.score;
+      if (gsm.maxCombo > profile.bestCombo) profile.bestCombo = gsm.maxCombo;
+      if (!profile.bestScoreByMode['bossrush'] || gsm.score > profile.bestScoreByMode['bossrush']) {
+        profile.bestScoreByMode['bossrush'] = gsm.score;
+      }
+      gsm.modesPlayed.add('bossrush');
+      gsm.savePersistence();
+      saveProfile(profile);
+      gsm.addToLeaderboard();
+      setTimeout(() => {
+        hideUI('levelcomplete');
+        gsm.state = 'gameover' as any;
+        showUI('victory');
+        const mins = Math.floor(totalTime / 60);
+        const secs = Math.floor(totalTime % 60);
+        updateVictory(gsm.score, `${mins}m ${secs}s`, gsm.maxCombo, xpEarned);
+        audio.playBossDefeat();
+        for (let i = 0; i < 12; i++) {
+          setTimeout(() => {
+            const theme = THEMES[gsm.selectedTheme];
+            spawnParticles((Math.random() - 0.5) * FIELD_WIDTH, FIELD_Y_OFFSET + Math.random() * FIELD_HEIGHT, i % 2 === 0 ? theme.accent : '#ffd700', 12);
+            triggerScreenShake(0.003);
+          }, i * 200);
+        }
+        if (profile.level > oldLevel) {
+          setTimeout(() => {
+            showUI('levelup');
+            updateLevelUp(profile.level, xpEarned, oldLevel);
+            setTimeout(() => hideUI('levelup'), 3000);
+          }, 2000);
+        }
+      }, 2500);
+      return;
+    }
+  }
+
   // Campaign victory — completed all 48 levels in Classic
   if (gsm.mode === 'classic' && gsm.level >= 48) {
     checkAchievement('campaign_victory');
@@ -1611,22 +1736,28 @@ function onGameOver() {
   gsm.modesPlayed.add(gsm.mode);
   gsm.savePersistence();
   if (gsm.modesPlayed.size >= 7) checkAchievement('all_modes');
+  if (gsm.modesPlayed.size >= 8) checkAchievement('all_8_modes');
 
   // Survival achievements
   if (gsm.mode === 'survival') {
     if (gsm.survivalWave >= 5) checkAchievement('survival_wave_5');
     if (gsm.survivalWave >= 10) checkAchievement('survival_wave_10');
     if (gsm.survivalWave >= 20) checkAchievement('survival_wave_20');
+    if (gsm.survivalWave >= 30) checkAchievement('survival_wave_30');
     if (gsm.score >= 50000) checkAchievement('survival_score_50k');
     if (gsm.score >= 200000) checkAchievement('survival_score_200k');
     if (gsm.powerupsCollected === 0 && gsm.survivalWave >= 5) checkAchievement('survival_no_powerup');
   }
 
+  if (gsm.mode === 'zen' && gsm.score >= 100000) checkAchievement('zen_100k');
+
   // Extended career achievements
   if (profile.totalScore >= 5000000) checkAchievement('score_5m');
   if (profile.totalScore >= 10000000) checkAchievement('score_10m');
+  if (profile.totalScore >= 20000000) checkAchievement('score_20m');
   if (profile.totalBricks >= 10000) checkAchievement('bricks_10000');
   if (profile.totalBricks >= 20000) checkAchievement('bricks_20000');
+  if (profile.totalBricks >= 50000) checkAchievement('bricks_50000');
 
   // Check progression unlocks
   if (profile.level !== oldLevel) {
@@ -1976,6 +2107,19 @@ function wireUIEvents() {
         showUI('practiceselect');
         updatePracticeSelect();
       });
+      modeDoc.getElementById('btn-bossrush')?.addEventListener('click', () => {
+        audio.playButtonClick();
+        gsm.mode = 'bossrush' as any;
+        hideUI('modeselect');
+        gsm.activeModifiers.clear();
+        gsm.resetGame();
+        gsm.bossRushIdx = 0;
+        gsm.bossRushBossesDefeatedThisRun = 0;
+        gsm.modesPlayed.add('bossrush');
+        gsm.savePersistence();
+        gameStartTime = Date.now();
+        startLevel();
+      });
     } else { allReady = false; }
 
     // Difficulty
@@ -2315,9 +2459,12 @@ function updateProfile() {
   setText(doc, 'stat-perfect', String(profile.perfectLevels));
   setText(doc, 'stat-won', String(profile.gamesWon));
   setText(doc, 'stat-daily', String(profile.dailyChallengesCompleted));
+  setText(doc, 'stat-golden', String(profile.goldenBricks));
+  setText(doc, 'stat-shields', String(profile.shieldSaves));
+  setText(doc, 'stat-chains', String(profile.explosiveChains));
   // Per-mode best scores
-  const modes = ['classic', 'endless', 'timeattack', 'zen', 'daily'];
-  const modeLabels = ['Classic', 'Endless', 'Time Atk', 'Zen', 'Daily'];
+  const modes = ['classic', 'endless', 'timeattack', 'zen', 'daily', 'survival', 'bossrush'];
+  const modeLabels = ['Classic', 'Endless', 'Time Atk', 'Zen', 'Daily', 'Survival', 'Boss Rush'];
   let modeStr = '';
   for (let i = 0; i < modes.length; i++) {
     const best = profile.bestScoreByMode[modes[i]];

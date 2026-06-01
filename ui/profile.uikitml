@@ -25,6 +25,9 @@
     <panel flex-direction="row" justify-content="space-between"><text font-size="13" color="#00ffff80">Perfect Levels</text><text id="stat-perfect" font-size="13" color="#00ffff">0</text></panel>
     <panel flex-direction="row" justify-content="space-between"><text font-size="13" color="#00ffff80">Games Won</text><text id="stat-won" font-size="13" color="#00ffff">0</text></panel>
     <panel flex-direction="row" justify-content="space-between"><text font-size="13" color="#00ffff80">Dailies Done</text><text id="stat-daily" font-size="13" color="#00ffff">0</text></panel>
+    <panel flex-direction="row" justify-content="space-between"><text font-size="13" color="#ff880080">Golden Bricks</text><text id="stat-golden" font-size="13" color="#ffd700">0</text></panel>
+    <panel flex-direction="row" justify-content="space-between"><text font-size="13" color="#ff880080">Shield Saves</text><text id="stat-shields" font-size="13" color="#4488ff">0</text></panel>
+    <panel flex-direction="row" justify-content="space-between"><text font-size="13" color="#ff880080">Explosive Chains</text><text id="stat-chains" font-size="13" color="#ff4400">0</text></panel>
     <text font-size="11" color="#888888" margin-top="6">─── Best by Mode ───</text>
     <text id="stat-modes" font-size="11" color="#ffaa88"></text>
   </panel>

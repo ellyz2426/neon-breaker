@@ -85,6 +85,7 @@ export function calculateGameXP(score: number, bricksDestroyed: number, levelsCl
   if (mode === 'daily') xp = Math.floor(xp * 2.0);
   if (mode === 'survival') xp = Math.floor(xp * 1.8);
   if (mode === 'practice') xp = 0; // no XP in practice
+  if (mode === 'bossrush') xp = Math.floor(xp * 2.0);
   return xp;
 }
 

@@ -211,6 +211,17 @@ export const ACHIEVEMENTS: Achievement[] = [
   { id: 'slam_hit_5', name: 'Shockwave Master', desc: 'Hit 5 bricks with a single slam', unlocked: false },
   { id: 'score_10m', name: 'Ten Million Club', desc: 'Score 10,000,000 points total', unlocked: false },
   { id: 'bricks_20000', name: 'Brick Obliterator', desc: 'Destroy 20,000 bricks total', unlocked: false },
+  // Round 7: Boss Rush & mastery achievements
+  { id: 'boss_rush_clear', name: 'Boss Rush Champion', desc: 'Defeat all 4 bosses in Boss Rush', unlocked: false },
+  { id: 'boss_rush_no_miss', name: 'Boss Rush Flawless', desc: 'Clear Boss Rush without losing a ball', unlocked: false },
+  { id: 'boss_rush_speed', name: 'Boss Rush Speedrun', desc: 'Clear Boss Rush in under 5 minutes', unlocked: false },
+  { id: 'combo_300', name: 'Combo Infinite', desc: 'Reach a 300x combo', unlocked: false },
+  { id: 'score_20m', name: 'Twenty Million', desc: 'Score 20,000,000 points total', unlocked: false },
+  { id: 'all_8_modes', name: 'Mode Master', desc: 'Play all 8 game modes at least once', unlocked: false },
+  { id: 'survival_wave_30', name: 'Survival God', desc: 'Survive 30 waves in Survival mode', unlocked: false },
+  { id: 'bricks_50000', name: 'Brick Eraser', desc: 'Destroy 50,000 bricks total', unlocked: false },
+  { id: 'zen_100k', name: 'Zen Master', desc: 'Score 100,000 in Zen mode', unlocked: false },
+  { id: 'explosive_chain_8', name: 'Chain Overlord', desc: 'Trigger 8+ bricks in one explosive chain', unlocked: false },
 ];
 
 // ─── Level Data ───
@@ -995,7 +1006,9 @@ export class GameStateManager {
   shieldSaves = 0;
   selectedTheme = 0;
   difficulty: 'easy' | 'medium' | 'hard' = 'medium';
-  mode: 'classic' | 'endless' | 'timeattack' | 'zen' | 'daily' | 'survival' | 'practice' = 'classic';
+  mode: 'classic' | 'endless' | 'timeattack' | 'zen' | 'daily' | 'survival' | 'practice' | 'bossrush' = 'classic';
+  bossRushIdx = 0;
+  bossRushBossesDefeatedThisRun = 0;
   activeModifiers: Set<ChallengeModifier> = new Set();
   bossesDefeated: Set<number> = new Set();
   consecutivePerfectLevels = 0;
@@ -1100,6 +1113,8 @@ export class GameStateManager {
     this.survivalSpawnTimer = 0;
     this.megaBallHits = 0;
     this.megaBallSessionHits = 0;
+    this.bossRushIdx = 0;
+    this.bossRushBossesDefeatedThisRun = 0;
     // Modifiers persist across reset (set before startLevel)
   }
 

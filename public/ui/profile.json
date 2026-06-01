@@ -466,6 +466,114 @@
                     "dataUid": "uid-39"
                   },
                   {
+                    "sourceTag": "panel",
+                    "type": "custom",
+                    "children": [
+                      {
+                        "sourceTag": "text",
+                        "type": "custom",
+                        "children": [
+                          "Golden Bricks"
+                        ],
+                        "properties": {
+                          "fontSize": "13",
+                          "color": "#ff880080"
+                        },
+                        "dataUid": "uid-43"
+                      },
+                      {
+                        "sourceTag": "text",
+                        "type": "custom",
+                        "children": [
+                          "0"
+                        ],
+                        "properties": {
+                          "id": "stat-golden",
+                          "fontSize": "13",
+                          "color": "#ffd700"
+                        },
+                        "dataUid": "uid-44"
+                      }
+                    ],
+                    "properties": {
+                      "flexDirection": "row",
+                      "justifyContent": "space-between"
+                    },
+                    "dataUid": "uid-42"
+                  },
+                  {
+                    "sourceTag": "panel",
+                    "type": "custom",
+                    "children": [
+                      {
+                        "sourceTag": "text",
+                        "type": "custom",
+                        "children": [
+                          "Shield Saves"
+                        ],
+                        "properties": {
+                          "fontSize": "13",
+                          "color": "#ff880080"
+                        },
+                        "dataUid": "uid-46"
+                      },
+                      {
+                        "sourceTag": "text",
+                        "type": "custom",
+                        "children": [
+                          "0"
+                        ],
+                        "properties": {
+                          "id": "stat-shields",
+                          "fontSize": "13",
+                          "color": "#4488ff"
+                        },
+                        "dataUid": "uid-47"
+                      }
+                    ],
+                    "properties": {
+                      "flexDirection": "row",
+                      "justifyContent": "space-between"
+                    },
+                    "dataUid": "uid-45"
+                  },
+                  {
+                    "sourceTag": "panel",
+                    "type": "custom",
+                    "children": [
+                      {
+                        "sourceTag": "text",
+                        "type": "custom",
+                        "children": [
+                          "Explosive Chains"
+                        ],
+                        "properties": {
+                          "fontSize": "13",
+                          "color": "#ff880080"
+                        },
+                        "dataUid": "uid-49"
+                      },
+                      {
+                        "sourceTag": "text",
+                        "type": "custom",
+                        "children": [
+                          "0"
+                        ],
+                        "properties": {
+                          "id": "stat-chains",
+                          "fontSize": "13",
+                          "color": "#ff4400"
+                        },
+                        "dataUid": "uid-50"
+                      }
+                    ],
+                    "properties": {
+                      "flexDirection": "row",
+                      "justifyContent": "space-between"
+                    },
+                    "dataUid": "uid-48"
+                  },
+                  {
                     "sourceTag": "text",
                     "type": "custom",
                     "children": [
@@ -476,7 +584,7 @@
                       "color": "#888888",
                       "marginTop": "6"
                     },
-                    "dataUid": "uid-42"
+                    "dataUid": "uid-51"
                   },
                   {
                     "sourceTag": "text",
@@ -487,7 +595,7 @@
                       "fontSize": "11",
                       "color": "#ffaa88"
                     },
-                    "dataUid": "uid-43"
+                    "dataUid": "uid-52"
                   }
                 ],
                 "properties": {
@@ -512,7 +620,7 @@
                       "fontWeight": "bold",
                       "color": "#00ffff"
                     },
-                    "dataUid": "uid-45"
+                    "dataUid": "uid-54"
                   }
                 ],
                 "properties": {
@@ -527,7 +635,7 @@
                   "cursor": "pointer",
                   "marginTop": "8"
                 },
-                "dataUid": "uid-44"
+                "dataUid": "uid-53"
               }
             ],
             "properties": {
@@ -572,7 +680,7 @@
         "column": 0
       },
       "end": {
-        "line": 35,
+        "line": 38,
         "column": 0
       }
     },
@@ -592,7 +700,7 @@
         "column": 2
       },
       "end": {
-        "line": 35,
+        "line": 38,
         "column": 0
       }
     },
@@ -642,7 +750,7 @@
         "column": 2
       },
       "end": {
-        "line": 34,
+        "line": 37,
         "column": 8
       }
     },
@@ -672,7 +780,7 @@
         "column": 2
       },
       "end": {
-        "line": 29,
+        "line": 32,
         "column": 10
       }
     },
@@ -983,36 +1091,126 @@
       },
       "end": {
         "line": 27,
-        "column": 83
+        "column": 193
       }
     },
     "uid-43": {
       "start": {
-        "line": 28,
-        "column": 4
+        "line": 27,
+        "column": 64
       },
       "end": {
-        "line": 28,
-        "column": 64
+        "line": 27,
+        "column": 123
       }
     },
     "uid-44": {
       "start": {
-        "line": 31,
-        "column": 2
+        "line": 27,
+        "column": 123
       },
       "end": {
-        "line": 33,
-        "column": 10
+        "line": 27,
+        "column": 185
       }
     },
     "uid-45": {
       "start": {
-        "line": 32,
+        "line": 28,
         "column": 4
       },
       "end": {
-        "line": 32,
+        "line": 28,
+        "column": 193
+      }
+    },
+    "uid-46": {
+      "start": {
+        "line": 28,
+        "column": 64
+      },
+      "end": {
+        "line": 28,
+        "column": 122
+      }
+    },
+    "uid-47": {
+      "start": {
+        "line": 28,
+        "column": 122
+      },
+      "end": {
+        "line": 28,
+        "column": 185
+      }
+    },
+    "uid-48": {
+      "start": {
+        "line": 29,
+        "column": 4
+      },
+      "end": {
+        "line": 29,
+        "column": 196
+      }
+    },
+    "uid-49": {
+      "start": {
+        "line": 29,
+        "column": 64
+      },
+      "end": {
+        "line": 29,
+        "column": 126
+      }
+    },
+    "uid-50": {
+      "start": {
+        "line": 29,
+        "column": 126
+      },
+      "end": {
+        "line": 29,
+        "column": 188
+      }
+    },
+    "uid-51": {
+      "start": {
+        "line": 30,
+        "column": 4
+      },
+      "end": {
+        "line": 30,
+        "column": 83
+      }
+    },
+    "uid-52": {
+      "start": {
+        "line": 31,
+        "column": 4
+      },
+      "end": {
+        "line": 31,
+        "column": 64
+      }
+    },
+    "uid-53": {
+      "start": {
+        "line": 34,
+        "column": 2
+      },
+      "end": {
+        "line": 36,
+        "column": 10
+      }
+    },
+    "uid-54": {
+      "start": {
+        "line": 35,
+        "column": 4
+      },
+      "end": {
+        "line": 35,
         "column": 71
       }
     }

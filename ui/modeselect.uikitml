@@ -8,6 +8,8 @@
   .surv-name { font-size: 2; color: #ff4400; font-weight: bold; }
   .btn-prac { display: flex; flex-direction: column; align-items: center; padding-top: 0.8; padding-bottom: 0.8; padding-left: 3; padding-right: 3; margin-top: 0.6; background-color: rgba(136,255,0,0.12); border-color: #88ff00; border-width: 0.08; border-radius: 0.8; cursor: pointer; min-width: 20; }
   .prac-name { font-size: 2; color: #88ff00; font-weight: bold; }
+  .btn-boss { display: flex; flex-direction: column; align-items: center; padding-top: 0.8; padding-bottom: 0.8; padding-left: 3; padding-right: 3; margin-top: 0.6; background-color: rgba(170,68,255,0.15); border-color: #aa44ff; border-width: 0.08; border-radius: 0.8; cursor: pointer; min-width: 20; }
+  .boss-name { font-size: 2; color: #aa44ff; font-weight: bold; }
   .btn-back { display: flex; justify-content: center; align-items: center; padding-top: 0.6; padding-bottom: 0.6; padding-left: 2; padding-right: 2; margin-top: 1; background-color: rgba(255,255,255,0.05); border-color: #666666; border-width: 0.05; border-radius: 0.6; cursor: pointer; }
   .back-text { font-size: 1.5; color: #888888; }
 </style>
@@ -15,7 +17,7 @@
   <span class="heading">SELECT MODE</span>
   <div id="btn-classic" class="btn">
     <span class="btn-name">CLASSIC</span>
-    <span class="btn-desc">36 levels across 3 zones, 3 lives</span>
+    <span class="btn-desc">48 levels across 4 zones, 3 lives</span>
   </div>
   <div id="btn-endless" class="btn">
     <span class="btn-name">ENDLESS</span>
@@ -36,6 +38,10 @@
   <div id="btn-practice" class="btn-prac">
     <span class="prac-name">PRACTICE</span>
     <span class="btn-desc">Replay any unlocked level</span>
+  </div>
+  <div id="btn-bossrush" class="btn-boss">
+    <span class="boss-name">BOSS RUSH</span>
+    <span class="btn-desc">All 4 bosses, back to back, 3 lives</span>
   </div>
   <div id="btn-back" class="btn-back"><span class="back-text">BACK</span></div>
 </div>
