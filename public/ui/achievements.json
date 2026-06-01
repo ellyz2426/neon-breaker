@@ -18,13 +18,25 @@
         "sourceTag": "span",
         "type": "custom",
         "children": [
+          "0 / 40"
+        ],
+        "properties": {
+          "id": "ach-counter",
+          "class": "counter"
+        },
+        "dataUid": "uid-3"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
           "[ ] First Break"
         ],
         "properties": {
           "id": "ach-0",
-          "class": "row"
+          "class": "ach"
         },
-        "dataUid": "uid-3"
+        "dataUid": "uid-4"
       },
       {
         "sourceTag": "span",
@@ -34,9 +46,9 @@
         ],
         "properties": {
           "id": "ach-1",
-          "class": "row"
+          "class": "ach"
         },
-        "dataUid": "uid-4"
+        "dataUid": "uid-5"
       },
       {
         "sourceTag": "span",
@@ -46,9 +58,33 @@
         ],
         "properties": {
           "id": "ach-2",
-          "class": "row"
+          "class": "ach"
         },
-        "dataUid": "uid-5"
+        "dataUid": "uid-6"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "[ ] Wall Crusher"
+        ],
+        "properties": {
+          "id": "ach-3",
+          "class": "ach"
+        },
+        "dataUid": "uid-7"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "[ ] Final Boss"
+        ],
+        "properties": {
+          "id": "ach-4",
+          "class": "ach"
+        },
+        "dataUid": "uid-8"
       },
       {
         "sourceTag": "span",
@@ -57,10 +93,10 @@
           "[ ] Combo Starter"
         ],
         "properties": {
-          "id": "ach-3",
-          "class": "row"
+          "id": "ach-5",
+          "class": "ach"
         },
-        "dataUid": "uid-6"
+        "dataUid": "uid-9"
       },
       {
         "sourceTag": "span",
@@ -69,10 +105,10 @@
           "[ ] Combo Master"
         ],
         "properties": {
-          "id": "ach-4",
-          "class": "row"
+          "id": "ach-6",
+          "class": "ach"
         },
-        "dataUid": "uid-7"
+        "dataUid": "uid-10"
       },
       {
         "sourceTag": "span",
@@ -81,10 +117,22 @@
           "[ ] Combo Legend"
         ],
         "properties": {
-          "id": "ach-5",
-          "class": "row"
+          "id": "ach-7",
+          "class": "ach"
         },
-        "dataUid": "uid-8"
+        "dataUid": "uid-11"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "[ ] Combo God"
+        ],
+        "properties": {
+          "id": "ach-8",
+          "class": "ach"
+        },
+        "dataUid": "uid-12"
       },
       {
         "sourceTag": "span",
@@ -93,10 +141,10 @@
           "[ ] Ten Grand"
         ],
         "properties": {
-          "id": "ach-6",
-          "class": "row"
+          "id": "ach-9",
+          "class": "ach"
         },
-        "dataUid": "uid-9"
+        "dataUid": "uid-13"
       },
       {
         "sourceTag": "span",
@@ -105,10 +153,10 @@
           "[ ] High Roller"
         ],
         "properties": {
-          "id": "ach-7",
-          "class": "row"
+          "id": "ach-10",
+          "class": "ach"
         },
-        "dataUid": "uid-10"
+        "dataUid": "uid-14"
       },
       {
         "sourceTag": "span",
@@ -117,10 +165,22 @@
           "[ ] Century Club"
         ],
         "properties": {
-          "id": "ach-8",
-          "class": "row"
+          "id": "ach-11",
+          "class": "ach"
         },
-        "dataUid": "uid-11"
+        "dataUid": "uid-15"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "[ ] Half Million"
+        ],
+        "properties": {
+          "id": "ach-12",
+          "class": "ach"
+        },
+        "dataUid": "uid-16"
       },
       {
         "sourceTag": "span",
@@ -129,10 +189,10 @@
           "[ ] Ball Storm"
         ],
         "properties": {
-          "id": "ach-9",
-          "class": "row"
+          "id": "ach-13",
+          "class": "ach"
         },
-        "dataUid": "uid-12"
+        "dataUid": "uid-17"
       },
       {
         "sourceTag": "span",
@@ -141,10 +201,22 @@
           "[ ] Power Hungry"
         ],
         "properties": {
-          "id": "ach-10",
-          "class": "row"
+          "id": "ach-14",
+          "class": "ach"
         },
-        "dataUid": "uid-13"
+        "dataUid": "uid-18"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "[ ] Power Addict"
+        ],
+        "properties": {
+          "id": "ach-15",
+          "class": "ach"
+        },
+        "dataUid": "uid-19"
       },
       {
         "sourceTag": "span",
@@ -153,10 +225,10 @@
           "[ ] Perfect Level"
         ],
         "properties": {
-          "id": "ach-11",
-          "class": "row"
+          "id": "ach-16",
+          "class": "ach"
         },
-        "dataUid": "uid-14"
+        "dataUid": "uid-20"
       },
       {
         "sourceTag": "span",
@@ -165,10 +237,10 @@
           "[ ] Through the Fire"
         ],
         "properties": {
-          "id": "ach-12",
-          "class": "row"
+          "id": "ach-17",
+          "class": "ach"
         },
-        "dataUid": "uid-15"
+        "dataUid": "uid-21"
       },
       {
         "sourceTag": "span",
@@ -177,10 +249,10 @@
           "[ ] Chain Reaction"
         ],
         "properties": {
-          "id": "ach-13",
-          "class": "row"
+          "id": "ach-18",
+          "class": "ach"
         },
-        "dataUid": "uid-16"
+        "dataUid": "uid-22"
       },
       {
         "sourceTag": "span",
@@ -189,10 +261,10 @@
           "[ ] Gold Rush"
         ],
         "properties": {
-          "id": "ach-14",
-          "class": "row"
+          "id": "ach-19",
+          "class": "ach"
         },
-        "dataUid": "uid-17"
+        "dataUid": "uid-23"
       },
       {
         "sourceTag": "span",
@@ -201,10 +273,10 @@
           "[ ] Sharpshooter"
         ],
         "properties": {
-          "id": "ach-15",
-          "class": "row"
+          "id": "ach-20",
+          "class": "ach"
         },
-        "dataUid": "uid-18"
+        "dataUid": "uid-24"
       },
       {
         "sourceTag": "span",
@@ -213,10 +285,10 @@
           "[ ] Safety Net"
         ],
         "properties": {
-          "id": "ach-16",
-          "class": "row"
+          "id": "ach-21",
+          "class": "ach"
         },
-        "dataUid": "uid-19"
+        "dataUid": "uid-25"
       },
       {
         "sourceTag": "span",
@@ -225,10 +297,10 @@
           "[ ] Speed Demon"
         ],
         "properties": {
-          "id": "ach-17",
-          "class": "row"
+          "id": "ach-22",
+          "class": "ach"
         },
-        "dataUid": "uid-20"
+        "dataUid": "uid-26"
       },
       {
         "sourceTag": "span",
@@ -237,10 +309,10 @@
           "[ ] Decorator"
         ],
         "properties": {
-          "id": "ach-18",
-          "class": "row"
+          "id": "ach-23",
+          "class": "ach"
         },
-        "dataUid": "uid-21"
+        "dataUid": "uid-27"
       },
       {
         "sourceTag": "span",
@@ -249,10 +321,190 @@
           "[ ] Endurance"
         ],
         "properties": {
-          "id": "ach-19",
-          "class": "row"
+          "id": "ach-24",
+          "class": "ach"
         },
-        "dataUid": "uid-22"
+        "dataUid": "uid-28"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "[ ] Rising Star"
+        ],
+        "properties": {
+          "id": "ach-25",
+          "class": "ach"
+        },
+        "dataUid": "uid-29"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "[ ] Veteran"
+        ],
+        "properties": {
+          "id": "ach-26",
+          "class": "ach"
+        },
+        "dataUid": "uid-30"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "[ ] Grandmaster"
+        ],
+        "properties": {
+          "id": "ach-27",
+          "class": "ach"
+        },
+        "dataUid": "uid-31"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "[ ] Regular"
+        ],
+        "properties": {
+          "id": "ach-28",
+          "class": "ach"
+        },
+        "dataUid": "uid-32"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "[ ] Dedicated"
+        ],
+        "properties": {
+          "id": "ach-29",
+          "class": "ach"
+        },
+        "dataUid": "uid-33"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "[ ] Daily Player"
+        ],
+        "properties": {
+          "id": "ach-30",
+          "class": "ach"
+        },
+        "dataUid": "uid-34"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "[ ] Weekly Warrior"
+        ],
+        "properties": {
+          "id": "ach-31",
+          "class": "ach"
+        },
+        "dataUid": "uid-35"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "[ ] Destroyer"
+        ],
+        "properties": {
+          "id": "ach-32",
+          "class": "ach"
+        },
+        "dataUid": "uid-36"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "[ ] Annihilator"
+        ],
+        "properties": {
+          "id": "ach-33",
+          "class": "ach"
+        },
+        "dataUid": "uid-37"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "[ ] Triple Perfection"
+        ],
+        "properties": {
+          "id": "ach-34",
+          "class": "ach"
+        },
+        "dataUid": "uid-38"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "[ ] Marathon Runner"
+        ],
+        "properties": {
+          "id": "ach-35",
+          "class": "ach"
+        },
+        "dataUid": "uid-39"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "[ ] Time Master"
+        ],
+        "properties": {
+          "id": "ach-36",
+          "class": "ach"
+        },
+        "dataUid": "uid-40"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "[ ] Purist"
+        ],
+        "properties": {
+          "id": "ach-37",
+          "class": "ach"
+        },
+        "dataUid": "uid-41"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "[ ] Collector"
+        ],
+        "properties": {
+          "id": "ach-38",
+          "class": "ach"
+        },
+        "dataUid": "uid-42"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "[ ] Pyromaniac"
+        ],
+        "properties": {
+          "id": "ach-39",
+          "class": "ach"
+        },
+        "dataUid": "uid-43"
       },
       {
         "type": "container",
@@ -267,14 +519,14 @@
             "properties": {
               "class": "back-text"
             },
-            "dataUid": "uid-24"
+            "dataUid": "uid-45"
           }
         ],
         "properties": {
           "id": "btn-back",
           "class": "btn-back"
         },
-        "dataUid": "uid-23"
+        "dataUid": "uid-44"
       }
     ],
     "properties": {
@@ -293,7 +545,7 @@
         "paddingLeft": "3",
         "paddingRight": "3",
         "backgroundColor": "rgba(0,0,0,0.85)",
-        "borderColor": "#ffd700",
+        "borderColor": "#00ffff",
         "borderWidth": "0.15",
         "borderRadius": 1.5
       }
@@ -301,21 +553,23 @@
     "heading": {
       "content": {
         "fontSize": "3",
-        "color": "#ffd700",
+        "color": "#00ffff",
         "fontWeight": "bold",
-        "marginBottom": "1.5"
+        "marginBottom": "1"
       }
     },
-    "row": {
+    "counter": {
       "content": {
-        "fontSize": "1.1",
-        "color": "#cccccc",
-        "marginTop": "0.2"
+        "fontSize": "1.5",
+        "color": "#888888",
+        "marginBottom": "1"
       }
     },
-    "unlocked": {
+    "ach": {
       "content": {
-        "color": "#00ff88"
+        "fontSize": "1.2",
+        "color": "#aaaaaa",
+        "marginTop": "0.3"
       }
     },
     "btn-back": {
@@ -327,7 +581,7 @@
         "paddingBottom": "0.6",
         "paddingLeft": "2",
         "paddingRight": "2",
-        "marginTop": "1.5",
+        "marginTop": "1",
         "backgroundColor": "rgba(255,255,255,0.05)",
         "borderColor": "#666666",
         "borderWidth": "0.05",
@@ -363,24 +617,24 @@
         "column": 10
       }
     },
-    "row": {
+    "counter": {
       "start": {
         "line": 3,
         "column": 2
       },
       "end": {
         "line": 3,
-        "column": 6
+        "column": 10
       }
     },
-    "unlocked": {
+    "ach": {
       "start": {
         "line": 4,
         "column": 2
       },
       "end": {
         "line": 4,
-        "column": 11
+        "column": 6
       }
     },
     "btn-back": {
@@ -409,7 +663,7 @@
         "column": 0
       },
       "end": {
-        "line": 31,
+        "line": 52,
         "column": 6
       }
     },
@@ -430,7 +684,7 @@
       },
       "end": {
         "line": 10,
-        "column": 53
+        "column": 54
       }
     },
     "uid-4": {
@@ -440,7 +694,7 @@
       },
       "end": {
         "line": 11,
-        "column": 54
+        "column": 53
       }
     },
     "uid-5": {
@@ -450,7 +704,7 @@
       },
       "end": {
         "line": 12,
-        "column": 59
+        "column": 54
       }
     },
     "uid-6": {
@@ -460,7 +714,7 @@
       },
       "end": {
         "line": 13,
-        "column": 55
+        "column": 59
       }
     },
     "uid-7": {
@@ -480,7 +734,7 @@
       },
       "end": {
         "line": 15,
-        "column": 54
+        "column": 52
       }
     },
     "uid-9": {
@@ -490,7 +744,7 @@
       },
       "end": {
         "line": 16,
-        "column": 51
+        "column": 55
       }
     },
     "uid-10": {
@@ -500,7 +754,7 @@
       },
       "end": {
         "line": 17,
-        "column": 53
+        "column": 54
       }
     },
     "uid-11": {
@@ -520,7 +774,7 @@
       },
       "end": {
         "line": 19,
-        "column": 52
+        "column": 51
       }
     },
     "uid-13": {
@@ -530,7 +784,7 @@
       },
       "end": {
         "line": 20,
-        "column": 55
+        "column": 51
       }
     },
     "uid-14": {
@@ -540,7 +794,7 @@
       },
       "end": {
         "line": 21,
-        "column": 56
+        "column": 54
       }
     },
     "uid-15": {
@@ -550,7 +804,7 @@
       },
       "end": {
         "line": 22,
-        "column": 59
+        "column": 55
       }
     },
     "uid-16": {
@@ -560,7 +814,7 @@
       },
       "end": {
         "line": 23,
-        "column": 57
+        "column": 55
       }
     },
     "uid-17": {
@@ -570,7 +824,7 @@
       },
       "end": {
         "line": 24,
-        "column": 52
+        "column": 53
       }
     },
     "uid-18": {
@@ -590,7 +844,7 @@
       },
       "end": {
         "line": 26,
-        "column": 53
+        "column": 55
       }
     },
     "uid-20": {
@@ -600,7 +854,7 @@
       },
       "end": {
         "line": 27,
-        "column": 54
+        "column": 56
       }
     },
     "uid-21": {
@@ -610,7 +864,7 @@
       },
       "end": {
         "line": 28,
-        "column": 52
+        "column": 59
       }
     },
     "uid-22": {
@@ -620,7 +874,7 @@
       },
       "end": {
         "line": 29,
-        "column": 52
+        "column": 57
       }
     },
     "uid-23": {
@@ -630,16 +884,226 @@
       },
       "end": {
         "line": 30,
-        "column": 79
+        "column": 52
       }
     },
     "uid-24": {
       "start": {
-        "line": 30,
+        "line": 31,
+        "column": 2
+      },
+      "end": {
+        "line": 31,
+        "column": 55
+      }
+    },
+    "uid-25": {
+      "start": {
+        "line": 32,
+        "column": 2
+      },
+      "end": {
+        "line": 32,
+        "column": 53
+      }
+    },
+    "uid-26": {
+      "start": {
+        "line": 33,
+        "column": 2
+      },
+      "end": {
+        "line": 33,
+        "column": 54
+      }
+    },
+    "uid-27": {
+      "start": {
+        "line": 34,
+        "column": 2
+      },
+      "end": {
+        "line": 34,
+        "column": 52
+      }
+    },
+    "uid-28": {
+      "start": {
+        "line": 35,
+        "column": 2
+      },
+      "end": {
+        "line": 35,
+        "column": 52
+      }
+    },
+    "uid-29": {
+      "start": {
+        "line": 36,
+        "column": 2
+      },
+      "end": {
+        "line": 36,
+        "column": 54
+      }
+    },
+    "uid-30": {
+      "start": {
+        "line": 37,
+        "column": 2
+      },
+      "end": {
+        "line": 37,
+        "column": 50
+      }
+    },
+    "uid-31": {
+      "start": {
+        "line": 38,
+        "column": 2
+      },
+      "end": {
+        "line": 38,
+        "column": 54
+      }
+    },
+    "uid-32": {
+      "start": {
+        "line": 39,
+        "column": 2
+      },
+      "end": {
+        "line": 39,
+        "column": 50
+      }
+    },
+    "uid-33": {
+      "start": {
+        "line": 40,
+        "column": 2
+      },
+      "end": {
+        "line": 40,
+        "column": 52
+      }
+    },
+    "uid-34": {
+      "start": {
+        "line": 41,
+        "column": 2
+      },
+      "end": {
+        "line": 41,
+        "column": 55
+      }
+    },
+    "uid-35": {
+      "start": {
+        "line": 42,
+        "column": 2
+      },
+      "end": {
+        "line": 42,
+        "column": 57
+      }
+    },
+    "uid-36": {
+      "start": {
+        "line": 43,
+        "column": 2
+      },
+      "end": {
+        "line": 43,
+        "column": 52
+      }
+    },
+    "uid-37": {
+      "start": {
+        "line": 44,
+        "column": 2
+      },
+      "end": {
+        "line": 44,
+        "column": 54
+      }
+    },
+    "uid-38": {
+      "start": {
+        "line": 45,
+        "column": 2
+      },
+      "end": {
+        "line": 45,
+        "column": 60
+      }
+    },
+    "uid-39": {
+      "start": {
+        "line": 46,
+        "column": 2
+      },
+      "end": {
+        "line": 46,
+        "column": 58
+      }
+    },
+    "uid-40": {
+      "start": {
+        "line": 47,
+        "column": 2
+      },
+      "end": {
+        "line": 47,
+        "column": 54
+      }
+    },
+    "uid-41": {
+      "start": {
+        "line": 48,
+        "column": 2
+      },
+      "end": {
+        "line": 48,
+        "column": 49
+      }
+    },
+    "uid-42": {
+      "start": {
+        "line": 49,
+        "column": 2
+      },
+      "end": {
+        "line": 49,
+        "column": 52
+      }
+    },
+    "uid-43": {
+      "start": {
+        "line": 50,
+        "column": 2
+      },
+      "end": {
+        "line": 50,
+        "column": 53
+      }
+    },
+    "uid-44": {
+      "start": {
+        "line": 51,
+        "column": 2
+      },
+      "end": {
+        "line": 51,
+        "column": 79
+      }
+    },
+    "uid-45": {
+      "start": {
+        "line": 51,
         "column": 38
       },
       "end": {
-        "line": 30,
+        "line": 51,
         "column": 73
       }
     }

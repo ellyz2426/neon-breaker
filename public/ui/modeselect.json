@@ -33,7 +33,7 @@
             "sourceTag": "span",
             "type": "custom",
             "children": [
-              "12 levels, 3 lives"
+              "24 levels, 3 lives"
             ],
             "properties": {
               "class": "btn-desc"

@@ -11,7 +11,7 @@
   <span class="heading">SELECT MODE</span>
   <div id="btn-classic" class="btn">
     <span class="btn-name">CLASSIC</span>
-    <span class="btn-desc">12 levels, 3 lives</span>
+    <span class="btn-desc">24 levels, 3 lives</span>
   </div>
   <div id="btn-endless" class="btn">
     <span class="btn-name">ENDLESS</span>

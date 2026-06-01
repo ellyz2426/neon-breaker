@@ -1,0 +1,42 @@
+<panel width="380" height="400" background-color="#000a14e8" border-radius="18" padding="18" flex-direction="column" align-items="center" gap="8">
+  <text font-size="24" font-weight="bold" color="#00ffff">BALL SKINS</text>
+  
+  <panel width="340" flex-direction="column" gap="6">
+    <panel id="ball-0" width="340" height="32" background-color="#00ffff18" border-radius="8" padding-left="12" padding-right="12" flex-direction="row" align-items="center" gap="8" hover-background-color="#00ffff30" cursor="pointer">
+      <text id="ball-0-name" font-size="14" color="#ffffff" flex-grow="1">Default</text>
+      <text id="ball-0-status" font-size="12" color="#00ff88">EQUIPPED</text>
+    </panel>
+    <panel id="ball-1" width="340" height="32" background-color="#00ffff18" border-radius="8" padding-left="12" padding-right="12" flex-direction="row" align-items="center" gap="8" hover-background-color="#00ffff30" cursor="pointer">
+      <text id="ball-1-name" font-size="14" color="#ffffff" flex-grow="1">Neon Pulse</text>
+      <text id="ball-1-status" font-size="12" color="#888888">Lv 3</text>
+    </panel>
+    <panel id="ball-2" width="340" height="32" background-color="#00ffff18" border-radius="8" padding-left="12" padding-right="12" flex-direction="row" align-items="center" gap="8" hover-background-color="#00ffff30" cursor="pointer">
+      <text id="ball-2-name" font-size="14" color="#ffffff" flex-grow="1">Plasma Orb</text>
+      <text id="ball-2-status" font-size="12" color="#888888">Lv 8</text>
+    </panel>
+    <panel id="ball-3" width="340" height="32" background-color="#00ffff18" border-radius="8" padding-left="12" padding-right="12" flex-direction="row" align-items="center" gap="8" hover-background-color="#00ffff30" cursor="pointer">
+      <text id="ball-3-name" font-size="14" color="#ffffff" flex-grow="1">Void Sphere</text>
+      <text id="ball-3-status" font-size="12" color="#888888">Lv 15</text>
+    </panel>
+    <panel id="ball-4" width="340" height="32" background-color="#00ffff18" border-radius="8" padding-left="12" padding-right="12" flex-direction="row" align-items="center" gap="8" hover-background-color="#00ffff30" cursor="pointer">
+      <text id="ball-4-name" font-size="14" color="#ffffff" flex-grow="1">Starfire</text>
+      <text id="ball-4-status" font-size="12" color="#888888">Lv 22</text>
+    </panel>
+    <panel id="ball-5" width="340" height="32" background-color="#00ffff18" border-radius="8" padding-left="12" padding-right="12" flex-direction="row" align-items="center" gap="8" hover-background-color="#00ffff30" cursor="pointer">
+      <text id="ball-5-name" font-size="14" color="#ffffff" flex-grow="1">Nebula</text>
+      <text id="ball-5-status" font-size="12" color="#888888">Lv 30</text>
+    </panel>
+    <panel id="ball-6" width="340" height="32" background-color="#00ffff18" border-radius="8" padding-left="12" padding-right="12" flex-direction="row" align-items="center" gap="8" hover-background-color="#00ffff30" cursor="pointer">
+      <text id="ball-6-name" font-size="14" color="#ffffff" flex-grow="1">Supernova</text>
+      <text id="ball-6-status" font-size="12" color="#888888">Lv 40</text>
+    </panel>
+    <panel id="ball-7" width="340" height="32" background-color="#00ffff18" border-radius="8" padding-left="12" padding-right="12" flex-direction="row" align-items="center" gap="8" hover-background-color="#00ffff30" cursor="pointer">
+      <text id="ball-7-name" font-size="14" color="#ffffff" flex-grow="1">Cosmic</text>
+      <text id="ball-7-status" font-size="12" color="#888888">Lv 50</text>
+    </panel>
+  </panel>
+
+  <panel id="btn-back" width="160" height="36" background-color="#00ffff30" border-radius="8" justify-content="center" align-items="center" hover-background-color="#00ffff50" cursor="pointer" margin-top="6">
+    <text font-size="15" font-weight="bold" color="#00ffff">BACK</text>
+  </panel>
+</panel>

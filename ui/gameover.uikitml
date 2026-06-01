@@ -4,6 +4,9 @@
   .stat-row { display: flex; flex-direction: row; justify-content: space-between; margin-top: 0.4; min-width: 20; }
   .stat-label { font-size: 1.6; color: #888888; }
   .stat-value { font-size: 1.6; color: #ffffff; font-weight: bold; }
+  .xp-row { display: flex; flex-direction: row; justify-content: space-between; margin-top: 0.6; min-width: 20; }
+  .xp-label { font-size: 1.6; color: #ffff00; }
+  .xp-value { font-size: 1.6; color: #ffff00; font-weight: bold; }
   .btn { display: flex; justify-content: center; align-items: center; padding-top: 1; padding-bottom: 1; padding-left: 3; padding-right: 3; margin-top: 1; background-color: rgba(0,255,255,0.15); border-color: #00ffff; border-width: 0.08; border-radius: 0.8; cursor: pointer; min-width: 14; }
   .btn-text { font-size: 2; color: #00ffff; font-weight: bold; }
   .btn-quit { background-color: rgba(255,255,255,0.05); border-color: #666666; }
@@ -26,6 +29,10 @@
   <div class="stat-row">
     <span class="stat-label">COMBO</span>
     <span id="combo-val" class="stat-value">x0</span>
+  </div>
+  <div class="xp-row">
+    <span class="xp-label">XP EARNED</span>
+    <span id="xp-val" class="xp-value">+0</span>
   </div>
   <div id="btn-rematch" class="btn"><span class="btn-text">REMATCH</span></div>
   <div id="btn-title" class="btn btn-quit"><span class="quit-text">TITLE</span></div>

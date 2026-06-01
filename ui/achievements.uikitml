@@ -1,32 +1,53 @@
 <style>
-  .panel { display: flex; flex-direction: column; align-items: center; padding-top: 2; padding-bottom: 2; padding-left: 3; padding-right: 3; background-color: rgba(0,0,0,0.85); border-color: #ffd700; border-width: 0.15; border-radius: 1.5; }
-  .heading { font-size: 3; color: #ffd700; font-weight: bold; margin-bottom: 1.5; }
-  .row { font-size: 1.1; color: #cccccc; margin-top: 0.2; }
-  .unlocked { color: #00ff88; }
-  .btn-back { display: flex; justify-content: center; align-items: center; padding-top: 0.6; padding-bottom: 0.6; padding-left: 2; padding-right: 2; margin-top: 1.5; background-color: rgba(255,255,255,0.05); border-color: #666666; border-width: 0.05; border-radius: 0.6; cursor: pointer; }
+  .panel { display: flex; flex-direction: column; align-items: center; padding-top: 2; padding-bottom: 2; padding-left: 3; padding-right: 3; background-color: rgba(0,0,0,0.85); border-color: #00ffff; border-width: 0.15; border-radius: 1.5; }
+  .heading { font-size: 3; color: #00ffff; font-weight: bold; margin-bottom: 1; }
+  .counter { font-size: 1.5; color: #888888; margin-bottom: 1; }
+  .ach { font-size: 1.2; color: #aaaaaa; margin-top: 0.3; }
+  .btn-back { display: flex; justify-content: center; align-items: center; padding-top: 0.6; padding-bottom: 0.6; padding-left: 2; padding-right: 2; margin-top: 1; background-color: rgba(255,255,255,0.05); border-color: #666666; border-width: 0.05; border-radius: 0.6; cursor: pointer; }
   .back-text { font-size: 1.5; color: #888888; }
 </style>
 <div class="panel">
   <span class="heading">ACHIEVEMENTS</span>
-  <span id="ach-0" class="row">[ ] First Break</span>
-  <span id="ach-1" class="row">[ ] Brick Buster</span>
-  <span id="ach-2" class="row">[ ] Demolition Expert</span>
-  <span id="ach-3" class="row">[ ] Combo Starter</span>
-  <span id="ach-4" class="row">[ ] Combo Master</span>
-  <span id="ach-5" class="row">[ ] Combo Legend</span>
-  <span id="ach-6" class="row">[ ] Ten Grand</span>
-  <span id="ach-7" class="row">[ ] High Roller</span>
-  <span id="ach-8" class="row">[ ] Century Club</span>
-  <span id="ach-9" class="row">[ ] Ball Storm</span>
-  <span id="ach-10" class="row">[ ] Power Hungry</span>
-  <span id="ach-11" class="row">[ ] Perfect Level</span>
-  <span id="ach-12" class="row">[ ] Through the Fire</span>
-  <span id="ach-13" class="row">[ ] Chain Reaction</span>
-  <span id="ach-14" class="row">[ ] Gold Rush</span>
-  <span id="ach-15" class="row">[ ] Sharpshooter</span>
-  <span id="ach-16" class="row">[ ] Safety Net</span>
-  <span id="ach-17" class="row">[ ] Speed Demon</span>
-  <span id="ach-18" class="row">[ ] Decorator</span>
-  <span id="ach-19" class="row">[ ] Endurance</span>
+  <span id="ach-counter" class="counter">0 / 40</span>
+  <span id="ach-0" class="ach">[ ] First Break</span>
+  <span id="ach-1" class="ach">[ ] Brick Buster</span>
+  <span id="ach-2" class="ach">[ ] Demolition Expert</span>
+  <span id="ach-3" class="ach">[ ] Wall Crusher</span>
+  <span id="ach-4" class="ach">[ ] Final Boss</span>
+  <span id="ach-5" class="ach">[ ] Combo Starter</span>
+  <span id="ach-6" class="ach">[ ] Combo Master</span>
+  <span id="ach-7" class="ach">[ ] Combo Legend</span>
+  <span id="ach-8" class="ach">[ ] Combo God</span>
+  <span id="ach-9" class="ach">[ ] Ten Grand</span>
+  <span id="ach-10" class="ach">[ ] High Roller</span>
+  <span id="ach-11" class="ach">[ ] Century Club</span>
+  <span id="ach-12" class="ach">[ ] Half Million</span>
+  <span id="ach-13" class="ach">[ ] Ball Storm</span>
+  <span id="ach-14" class="ach">[ ] Power Hungry</span>
+  <span id="ach-15" class="ach">[ ] Power Addict</span>
+  <span id="ach-16" class="ach">[ ] Perfect Level</span>
+  <span id="ach-17" class="ach">[ ] Through the Fire</span>
+  <span id="ach-18" class="ach">[ ] Chain Reaction</span>
+  <span id="ach-19" class="ach">[ ] Gold Rush</span>
+  <span id="ach-20" class="ach">[ ] Sharpshooter</span>
+  <span id="ach-21" class="ach">[ ] Safety Net</span>
+  <span id="ach-22" class="ach">[ ] Speed Demon</span>
+  <span id="ach-23" class="ach">[ ] Decorator</span>
+  <span id="ach-24" class="ach">[ ] Endurance</span>
+  <span id="ach-25" class="ach">[ ] Rising Star</span>
+  <span id="ach-26" class="ach">[ ] Veteran</span>
+  <span id="ach-27" class="ach">[ ] Grandmaster</span>
+  <span id="ach-28" class="ach">[ ] Regular</span>
+  <span id="ach-29" class="ach">[ ] Dedicated</span>
+  <span id="ach-30" class="ach">[ ] Daily Player</span>
+  <span id="ach-31" class="ach">[ ] Weekly Warrior</span>
+  <span id="ach-32" class="ach">[ ] Destroyer</span>
+  <span id="ach-33" class="ach">[ ] Annihilator</span>
+  <span id="ach-34" class="ach">[ ] Triple Perfection</span>
+  <span id="ach-35" class="ach">[ ] Marathon Runner</span>
+  <span id="ach-36" class="ach">[ ] Time Master</span>
+  <span id="ach-37" class="ach">[ ] Purist</span>
+  <span id="ach-38" class="ach">[ ] Collector</span>
+  <span id="ach-39" class="ach">[ ] Pyromaniac</span>
   <div id="btn-back" class="btn-back"><span class="back-text">BACK</span></div>
 </div>

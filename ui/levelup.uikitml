@@ -1,0 +1,6 @@
+<panel width="280" height="160" background-color="#000a14e8" border-radius="14" padding="14" flex-direction="column" align-items="center" gap="8">
+  <text font-size="20" font-weight="bold" color="#00ffff">LEVEL UP!</text>
+  <text id="levelup-text" font-size="32" font-weight="bold" color="#ffff00">Level 2</text>
+  <text id="levelup-xp" font-size="14" color="#00ffff80">+150 XP</text>
+  <text id="levelup-unlock" font-size="13" color="#00ff88"></text>
+</panel>

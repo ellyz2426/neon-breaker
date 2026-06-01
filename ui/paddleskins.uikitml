@@ -1,0 +1,38 @@
+<panel width="380" height="380" background-color="#000a14e8" border-radius="18" padding="18" flex-direction="column" align-items="center" gap="8">
+  <text font-size="24" font-weight="bold" color="#00ffff">PADDLE SKINS</text>
+  
+  <panel width="340" flex-direction="column" gap="6">
+    <panel id="paddle-0" width="340" height="32" background-color="#00ffff18" border-radius="8" padding-left="12" padding-right="12" flex-direction="row" align-items="center" gap="8" hover-background-color="#00ffff30" cursor="pointer">
+      <text id="paddle-0-name" font-size="14" color="#ffffff" flex-grow="1">Default</text>
+      <text id="paddle-0-status" font-size="12" color="#00ff88">EQUIPPED</text>
+    </panel>
+    <panel id="paddle-1" width="340" height="32" background-color="#00ffff18" border-radius="8" padding-left="12" padding-right="12" flex-direction="row" align-items="center" gap="8" hover-background-color="#00ffff30" cursor="pointer">
+      <text id="paddle-1-name" font-size="14" color="#ffffff" flex-grow="1">Hologram</text>
+      <text id="paddle-1-status" font-size="12" color="#888888">Lv 5</text>
+    </panel>
+    <panel id="paddle-2" width="340" height="32" background-color="#00ffff18" border-radius="8" padding-left="12" padding-right="12" flex-direction="row" align-items="center" gap="8" hover-background-color="#00ffff30" cursor="pointer">
+      <text id="paddle-2-name" font-size="14" color="#ffffff" flex-grow="1">Crystal</text>
+      <text id="paddle-2-status" font-size="12" color="#888888">Lv 10</text>
+    </panel>
+    <panel id="paddle-3" width="340" height="32" background-color="#00ffff18" border-radius="8" padding-left="12" padding-right="12" flex-direction="row" align-items="center" gap="8" hover-background-color="#00ffff30" cursor="pointer">
+      <text id="paddle-3-name" font-size="14" color="#ffffff" flex-grow="1">Ember</text>
+      <text id="paddle-3-status" font-size="12" color="#888888">Lv 18</text>
+    </panel>
+    <panel id="paddle-4" width="340" height="32" background-color="#00ffff18" border-radius="8" padding-left="12" padding-right="12" flex-direction="row" align-items="center" gap="8" hover-background-color="#00ffff30" cursor="pointer">
+      <text id="paddle-4-name" font-size="14" color="#ffffff" flex-grow="1">Aurora</text>
+      <text id="paddle-4-status" font-size="12" color="#888888">Lv 25</text>
+    </panel>
+    <panel id="paddle-5" width="340" height="32" background-color="#00ffff18" border-radius="8" padding-left="12" padding-right="12" flex-direction="row" align-items="center" gap="8" hover-background-color="#00ffff30" cursor="pointer">
+      <text id="paddle-5-name" font-size="14" color="#ffffff" flex-grow="1">Quantum</text>
+      <text id="paddle-5-status" font-size="12" color="#888888">Lv 35</text>
+    </panel>
+    <panel id="paddle-6" width="340" height="32" background-color="#00ffff18" border-radius="8" padding-left="12" padding-right="12" flex-direction="row" align-items="center" gap="8" hover-background-color="#00ffff30" cursor="pointer">
+      <text id="paddle-6-name" font-size="14" color="#ffffff" flex-grow="1">Singularity</text>
+      <text id="paddle-6-status" font-size="12" color="#888888">Lv 45</text>
+    </panel>
+  </panel>
+
+  <panel id="btn-back" width="160" height="36" background-color="#00ffff30" border-radius="8" justify-content="center" align-items="center" hover-background-color="#00ffff50" cursor="pointer" margin-top="6">
+    <text font-size="15" font-weight="bold" color="#00ffff">BACK</text>
+  </panel>
+</panel>

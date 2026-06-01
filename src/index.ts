@@ -16,6 +16,12 @@ import {
   BALL_RADIUS, BALL_SPEED, BRICK_W, BRICK_H, BRICK_D,
 } from './types.js';
 import { AudioManager } from './audio.js';
+import {
+  PlayerProfile, loadProfile, saveProfile,
+  calculateGameXP, getLevelFromXP, getXPProgressInLevel,
+  getAvailableUnlocks, getDailyChallengeSeed, seededRandom,
+  BALL_SKINS, BallSkin, PADDLE_SKINS, PaddleSkin, UNLOCKS,
+} from './progression.js';
 
 // ─── Globals ───
 let world: World;
@@ -26,9 +32,11 @@ const activeBricks: BrickObj[] = [];
 const activePowerUps: PowerUpObj[] = [];
 const particles: ParticleObj[] = [];
 const laserBeams: LaserObj[] = [];
+let profile: PlayerProfile = loadProfile();
 
 let paddleMesh: Mesh;
 let paddleGlow: Mesh;
+let paddleEdges: LineSegments;
 let shieldMesh: Mesh | null = null;
 let hasShield = false;
 let hasMagnet = false;
@@ -43,6 +51,10 @@ let paddleWidthMult = 1;
 let countdownVal = 0;
 let countdownTimer = 0;
 let levelCompleteTimer = 0;
+let gameStartTime = 0;
+let levelBallsLost = 0;
+let levelPowerupsUsed = 0;
+let levelExplosiveChains = 0;
 
 // UI entities
 const uiEntities: Record<string, any> = {};
@@ -97,19 +109,27 @@ interface LaserObj {
   active: boolean;
 }
 
+// ─── Skin Helpers ───
+function getCurrentBallSkin(): BallSkin {
+  return BALL_SKINS.find(s => s.id === profile.selectedBallSkin) || BALL_SKINS[0];
+}
+
+function getCurrentPaddleSkin(): PaddleSkin {
+  return PADDLE_SKINS.find(s => s.id === profile.selectedPaddleSkin) || PADDLE_SKINS[0];
+}
+
 // ─── Init ───
 async function main() {
   const container = document.getElementById('app') as HTMLDivElement;
   world = await World.create(container, {
     xr: { offer: 'once' as const },
-    input: { canvasPointerEvents: true },
     features: {
       grabbing: false,
       locomotion: false,
       physics: false,
       spatialUI: true,
     },
-  });
+  } as any);
 
   setupEnvironment();
   setupPaddle();
@@ -225,15 +245,12 @@ function setupEnvironment() {
   const wallMat = new MeshBasicMaterial({
     color: new Color(theme.accent), transparent: true, opacity: 0.08,
   });
-  // Left wall
   const lw = new Mesh(new BoxGeometry(0.02, FIELD_HEIGHT, 0.05), wallMat);
   lw.position.set(-FIELD_WIDTH / 2 - 0.01, FIELD_Y_OFFSET, FIELD_Z);
   world.scene.add(lw);
-  // Right wall
   const rw = new Mesh(new BoxGeometry(0.02, FIELD_HEIGHT, 0.05), wallMat);
   rw.position.set(FIELD_WIDTH / 2 + 0.01, FIELD_Y_OFFSET, FIELD_Z);
   world.scene.add(rw);
-  // Top wall
   const tw = new Mesh(new BoxGeometry(FIELD_WIDTH + 0.04, 0.02, 0.05), wallMat);
   tw.position.set(0, FIELD_Y_OFFSET + FIELD_HEIGHT / 2 + 0.01, FIELD_Z);
   world.scene.add(tw);
@@ -249,12 +266,12 @@ function setupEnvironment() {
 
 // ─── Paddle ───
 function setupPaddle() {
-  const theme = THEMES[gsm.selectedTheme];
+  const skin = getCurrentPaddleSkin();
   const paddleGeo = new BoxGeometry(PADDLE_WIDTH, PADDLE_HEIGHT, PADDLE_DEPTH);
   const paddleMat = new MeshStandardMaterial({
-    color: new Color(theme.paddle),
-    emissive: new Color(theme.paddle),
-    emissiveIntensity: 0.6,
+    color: new Color(skin.color),
+    emissive: new Color(skin.emissive),
+    emissiveIntensity: skin.intensity,
     metalness: 0.8,
     roughness: 0.2,
   });
@@ -262,15 +279,13 @@ function setupPaddle() {
   paddleMesh.position.set(0, PADDLE_Y, PADDLE_Z);
   world.scene.add(paddleMesh);
 
-  // Paddle edges
-  const edgeMat = new LineBasicMaterial({ color: new Color(theme.accent), transparent: true, opacity: 0.8 });
-  const edges = new LineSegments(new EdgesGeometry(paddleGeo), edgeMat);
-  paddleMesh.add(edges);
+  const edgeMat = new LineBasicMaterial({ color: new Color(skin.edgeColor), transparent: true, opacity: 0.8 });
+  paddleEdges = new LineSegments(new EdgesGeometry(paddleGeo), edgeMat);
+  paddleMesh.add(paddleEdges);
 
-  // Paddle glow
   const glowGeo = new SphereGeometry(0.08, 8, 6);
   const glowMat = new MeshBasicMaterial({
-    color: new Color(theme.glow), transparent: true, opacity: 0.2,
+    color: new Color(skin.glowColor), transparent: true, opacity: 0.2,
     blending: AdditiveBlending,
   });
   paddleGlow = new Mesh(glowGeo, glowMat);
@@ -278,14 +293,26 @@ function setupPaddle() {
   paddleMesh.add(paddleGlow);
 }
 
+function updatePaddleSkin() {
+  const skin = getCurrentPaddleSkin();
+  const mat = paddleMesh.material as MeshStandardMaterial;
+  mat.color.set(skin.color);
+  mat.emissive.set(skin.emissive);
+  mat.emissiveIntensity = skin.intensity;
+  const edgeMat = paddleEdges.material as LineBasicMaterial;
+  edgeMat.color.set(skin.edgeColor);
+  const glowMat = paddleGlow.material as MeshBasicMaterial;
+  glowMat.color.set(skin.glowColor);
+}
+
 // ─── Ball ───
 function createBall(x: number, y: number, vx: number, vy: number): BallObj {
-  const theme = THEMES[gsm.selectedTheme];
+  const skin = getCurrentBallSkin();
   const ballGeo = new SphereGeometry(BALL_RADIUS, 12, 8);
   const ballMat = new MeshStandardMaterial({
-    color: new Color(theme.ball),
-    emissive: new Color(theme.ball),
-    emissiveIntensity: 0.8,
+    color: new Color(skin.color),
+    emissive: new Color(skin.emissive),
+    emissiveIntensity: skin.intensity,
     metalness: 0.5,
     roughness: 0.2,
   });
@@ -293,10 +320,9 @@ function createBall(x: number, y: number, vx: number, vy: number): BallObj {
   mesh.position.set(x, y, PADDLE_Z);
   world.scene.add(mesh);
 
-  // Ball glow
   const glowGeo = new SphereGeometry(BALL_RADIUS * 2.5, 6, 4);
   const glowMat = new MeshBasicMaterial({
-    color: new Color(theme.glow), transparent: true, opacity: 0.25,
+    color: new Color(skin.glowColor), transparent: true, opacity: 0.25,
     blending: AdditiveBlending,
   });
   const glow = new Mesh(glowGeo, glowMat);
@@ -318,7 +344,6 @@ function launchBall() {
 
 // ─── Bricks ───
 function spawnLevel(levelData: LevelData) {
-  // Clear existing
   activeBricks.forEach(b => {
     world.scene.remove(b.mesh);
     world.scene.remove(b.edges);
@@ -362,9 +387,7 @@ function spawnLevel(levelData: LevelData) {
       mesh.position.set(bx, by, FIELD_Z);
       world.scene.add(mesh);
 
-      const edgeMat = new LineBasicMaterial({
-        color: new Color(color), transparent: true, opacity: 0.9,
-      });
+      const edgeMat = new LineBasicMaterial({ color: new Color(color), transparent: true, opacity: 0.9 });
       const edges = new LineSegments(new EdgesGeometry(geo), edgeMat);
       edges.position.copy(mesh.position);
       world.scene.add(edges);
@@ -392,7 +415,6 @@ function spawnLevel(levelData: LevelData) {
 
 // ─── Power-ups ───
 function spawnPowerUp(x: number, y: number) {
-  const theme = THEMES[gsm.selectedTheme];
   const type = Math.floor(Math.random() * 7) as PowerUpType;
   const colors = ['#00ffff', '#00ff88', '#ff4444', '#4488ff', '#ffaa00', '#88ff00', '#ff8800'];
   const color = colors[type];
@@ -421,6 +443,7 @@ function spawnPowerUp(x: number, y: number) {
 
 function applyPowerUp(pu: PowerUpObj) {
   gsm.powerupsCollected++;
+  levelPowerupsUsed++;
   audio.playPowerUp();
   showToast(getPowerUpName(pu.type) + '!');
 
@@ -468,10 +491,7 @@ function applyPowerUp(pu: PowerUpObj) {
     case PowerUpType.SLOW:
       slowTimer = 12;
       activeBalls.forEach(b => {
-        if (b.active) {
-          b.vx *= 0.7;
-          b.vy *= 0.7;
-        }
+        if (b.active) { b.vx *= 0.7; b.vy *= 0.7; }
       });
       break;
     case PowerUpType.FIREBALL:
@@ -487,6 +507,7 @@ function applyPowerUp(pu: PowerUpObj) {
   }
 
   if (gsm.powerupsCollected >= 5) checkAchievement('powerup_5');
+  if (gsm.powerupsCollected >= 20) checkAchievement('powerup_20');
 }
 
 function getPowerUpName(type: PowerUpType): string {
@@ -523,12 +544,8 @@ function spawnParticles(x: number, y: number, color: string, count: number) {
 
 // ─── Laser ───
 function fireLaser() {
-  const theme = THEMES[gsm.selectedTheme];
   const geo = new BoxGeometry(0.01, 0.15, 0.01);
-  const mat = new MeshBasicMaterial({
-    color: new Color('#ff4444'),
-    blending: AdditiveBlending,
-  });
+  const mat = new MeshBasicMaterial({ color: new Color('#ff4444'), blending: AdditiveBlending });
   const mesh = new Mesh(geo, mat);
   mesh.position.set(paddleMesh.position.x - 0.05 * paddleWidthMult, PADDLE_Y + 0.1, PADDLE_Z);
   world.scene.add(mesh);
@@ -557,16 +574,13 @@ function checkBallBrickCollision(ball: BallObj, dt: number) {
     const dy = by - brick.y;
 
     if (Math.abs(dx) < hw + r && Math.abs(dy) < hh + r) {
-      // Hit!
       if (!hasFireball || brick.type === BrickType.INDESTRUCTIBLE) {
-        // Reflect ball
         if (Math.abs(dx) / (hw + r) > Math.abs(dy) / (hh + r)) {
           ball.vx = -ball.vx;
         } else {
           ball.vy = -ball.vy;
         }
       }
-
       hitBrick(brick, ball);
       break;
     }
@@ -585,7 +599,6 @@ function hitBrick(brick: BrickObj, ball?: BallObj) {
   if (brick.hp <= 0) {
     destroyBrick(brick);
   } else {
-    // Flash the brick
     const mat = brick.mesh.material as MeshStandardMaterial;
     mat.emissiveIntensity = 1.2;
     setTimeout(() => { mat.emissiveIntensity = 0.4; }, 100);
@@ -605,7 +618,6 @@ function destroyBrick(brick: BrickObj) {
 
   audio.playBrickDestroy();
 
-  // Particles
   const colors: Record<number, string> = {
     [BrickType.NORMAL]: THEMES[gsm.selectedTheme].brick1,
     [BrickType.TOUGH]: THEMES[gsm.selectedTheme].brick2,
@@ -615,7 +627,6 @@ function destroyBrick(brick: BrickObj) {
   };
   spawnParticles(brick.x, brick.y, colors[brick.type] || '#ffffff', 8);
 
-  // Special brick behaviors
   if (brick.type === BrickType.EXPLOSIVE) {
     audio.playExplosion();
     spawnParticles(brick.x, brick.y, '#ff4400', 15);
@@ -629,7 +640,9 @@ function destroyBrick(brick: BrickObj) {
       }
     }
     gsm.explosiveChains = Math.max(gsm.explosiveChains, chainCount);
+    levelExplosiveChains++;
     if (chainCount >= 3) checkAchievement('explosive');
+    if (levelExplosiveChains >= 5) checkAchievement('explosive_5');
   }
 
   if (brick.type === BrickType.GOLDEN) {
@@ -646,18 +659,18 @@ function destroyBrick(brick: BrickObj) {
     if (gsm.fireballHits >= 10) checkAchievement('fireball');
   }
 
-  // Achievement checks
   if (gsm.bricksDestroyed === 1) checkAchievement('first_break');
   if (gsm.combo >= 5) checkAchievement('combo_5');
   if (gsm.combo >= 10) checkAchievement('combo_10');
   if (gsm.combo >= 25) checkAchievement('combo_25');
+  if (gsm.combo >= 50) checkAchievement('combo_50');
   if (gsm.score >= 10000) checkAchievement('score_10k');
   if (gsm.score >= 50000) checkAchievement('score_50k');
   if (gsm.score >= 100000) checkAchievement('score_100k');
+  if (gsm.score >= 500000) checkAchievement('score_500k');
 
   updateHUD();
 
-  // Check level complete
   const remaining = activeBricks.filter(b => b.active && b.type !== BrickType.INDESTRUCTIBLE);
   if (remaining.length === 0) {
     onLevelComplete();
@@ -711,7 +724,6 @@ function gameUpdate(dt: number) {
 
   if (gsm.state !== 'playing') return;
 
-  // Input
   updatePaddleFromInput();
 
   // Timers
@@ -727,11 +739,11 @@ function gameUpdate(dt: number) {
     fireballTimer -= dt;
     if (fireballTimer <= 0) {
       hasFireball = false;
+      const skin = getCurrentBallSkin();
       activeBalls.forEach(b => {
         if (b.active) {
-          const theme = THEMES[gsm.selectedTheme];
-          (b.mesh.material as MeshStandardMaterial).emissive.set(theme.ball);
-          (b.mesh.material as MeshStandardMaterial).emissiveIntensity = 0.8;
+          (b.mesh.material as MeshStandardMaterial).emissive.set(skin.emissive);
+          (b.mesh.material as MeshStandardMaterial).emissiveIntensity = skin.intensity;
         }
       });
     }
@@ -752,13 +764,7 @@ function gameUpdate(dt: number) {
     }
   }
 
-  // Laser firing
-  if (hasLaser) {
-    laserTimer -= 0; // just track; fire on click/trigger
-  }
-
   // Update balls
-  const speedMult = slowTimer > 0 ? 1 : 1;
   for (const ball of activeBalls) {
     if (!ball.active) continue;
 
@@ -799,14 +805,13 @@ function gameUpdate(dt: number) {
       ball.mesh.position.x > paddleX - pw &&
       ball.mesh.position.x < paddleX + pw
     ) {
-      // Reflect with angle based on hit position
-      const hitPos = (ball.mesh.position.x - paddleX) / pw; // -1 to 1
-      const angle = hitPos * (Math.PI / 3) + Math.PI / 2; // 60-120 degrees
+      const hitPos = (ball.mesh.position.x - paddleX) / pw;
+      const angle = hitPos * (Math.PI / 3) + Math.PI / 2;
       const speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
       ball.vx = Math.cos(angle) * speed;
       ball.vy = Math.abs(Math.sin(angle) * speed);
       ball.mesh.position.y = PADDLE_Y + PADDLE_HEIGHT / 2 + BALL_RADIUS;
-      gsm.combo = 0; // Reset combo on paddle hit
+      gsm.combo = 0;
       audio.playPaddleHit();
 
       if (hasMagnet) {
@@ -828,12 +833,13 @@ function gameUpdate(dt: number) {
       checkAchievement('shield_save');
     }
 
-    // Ball lost (below paddle)
+    // Ball lost
     if (ball.mesh.position.y < PADDLE_Y - 0.3) {
       ball.active = false;
       ball.mesh.visible = false;
       ball.glow.visible = false;
       gsm.ballsLost++;
+      levelBallsLost++;
       audio.playBallLost();
       spawnParticles(ball.mesh.position.x, PADDLE_Y - 0.2, '#ff4444', 12);
 
@@ -850,14 +856,13 @@ function gameUpdate(dt: number) {
       }
     }
 
-    // Brick collisions
     checkBallBrickCollision(ball, dt);
 
     // Ball trail
     if (ball.active && ball.trail.length < 20) {
       const trailGeo = new SphereGeometry(BALL_RADIUS * 0.5, 4, 4);
-      const theme = THEMES[gsm.selectedTheme];
-      const trailColor = hasFireball ? '#ff4400' : theme.glow;
+      const skin = getCurrentBallSkin();
+      const trailColor = hasFireball ? '#ff4400' : skin.trailColor;
       const trailMat = new MeshBasicMaterial({
         color: new Color(trailColor), transparent: true, opacity: 0.3,
         blending: AdditiveBlending,
@@ -867,7 +872,6 @@ function gameUpdate(dt: number) {
       world.scene.add(trailMesh);
       ball.trail.push(trailMesh);
     }
-    // Fade trail
     for (let i = ball.trail.length - 1; i >= 0; i--) {
       const t = ball.trail[i];
       const mat = t.material as MeshBasicMaterial;
@@ -885,10 +889,8 @@ function gameUpdate(dt: number) {
     pu.y += pu.vy * dt;
     pu.mesh.position.y = pu.y;
     pu.mesh.rotation.y += dt * 3;
-    // Bob
     pu.mesh.position.x = pu.x + Math.sin(performance.now() * 0.003) * 0.02;
 
-    // Paddle collision
     const pw = PADDLE_WIDTH * paddleWidthMult / 2;
     if (
       pu.y < PADDLE_Y + PADDLE_HEIGHT / 2 &&
@@ -902,7 +904,6 @@ function gameUpdate(dt: number) {
       applyPowerUp(pu);
     }
 
-    // Fell off screen
     if (pu.y < PADDLE_Y - 0.5) {
       pu.active = false;
       pu.mesh.visible = false;
@@ -916,7 +917,6 @@ function gameUpdate(dt: number) {
     laser.y += 4 * dt;
     laser.mesh.position.y = laser.y;
 
-    // Brick collision
     for (const brick of activeBricks) {
       if (!brick.active) continue;
       if (Math.abs(laser.mesh.position.x - brick.x) < BRICK_W / 2 &&
@@ -930,7 +930,6 @@ function gameUpdate(dt: number) {
       }
     }
 
-    // Off screen
     if (laser.y > FIELD_Y_OFFSET + FIELD_HEIGHT / 2 + 0.2) {
       laser.active = false;
       laser.mesh.visible = false;
@@ -945,7 +944,7 @@ function gameUpdate(dt: number) {
     p.mesh.position.x += p.vx * dt;
     p.mesh.position.y += p.vy * dt;
     p.mesh.position.z += p.vz * dt;
-    p.vy -= 1.5 * dt; // gravity
+    p.vy -= 1.5 * dt;
     const mat = p.mesh.material as MeshBasicMaterial;
     mat.opacity = (p.life / p.maxLife) * 0.8;
     if (p.life <= 0) {
@@ -955,15 +954,16 @@ function gameUpdate(dt: number) {
     }
   }
 
-  // Time attack mode check
+  // Time attack
   if (gsm.mode === 'timeattack') {
     const elapsed = (Date.now() - gsm.levelStartTime) / 1000;
     if (elapsed >= 90) {
+      if (gsm.score >= 60000) checkAchievement('time_60k');
       onGameOver();
     }
   }
 
-  // Endurance achievement
+  // Endurance
   if ((Date.now() - gsm.sessionStartTime) / 60000 >= 20) {
     checkAchievement('endurance');
   }
@@ -973,7 +973,6 @@ function gameUpdate(dt: number) {
 
 // ─── Level Management ───
 function startLevel() {
-  // Clear balls
   activeBalls.forEach(b => {
     b.active = false;
     b.mesh.visible = false;
@@ -982,18 +981,10 @@ function startLevel() {
   });
   activeBalls.length = 0;
 
-  // Clear powerups
-  activePowerUps.forEach(pu => {
-    pu.active = false;
-    pu.mesh.visible = false;
-  });
+  activePowerUps.forEach(pu => { pu.active = false; pu.mesh.visible = false; });
   activePowerUps.length = 0;
 
-  // Clear lasers
-  laserBeams.forEach(l => {
-    l.active = false;
-    l.mesh.visible = false;
-  });
+  laserBeams.forEach(l => { l.active = false; l.mesh.visible = false; });
   laserBeams.length = 0;
 
   // Reset power-up states
@@ -1007,23 +998,57 @@ function startLevel() {
   wideTimer = 0;
   paddleWidthMult = 1;
   updatePaddleScale();
+  levelBallsLost = 0;
+  levelPowerupsUsed = 0;
+  levelExplosiveChains = 0;
 
   const levels = getLevels();
-  const levelIdx = ((gsm.level - 1) % levels.length);
-  const levelData = levels[levelIdx];
+  let levelData: LevelData;
+
+  if (gsm.mode === 'daily') {
+    // Generate daily challenge level from seed
+    levelData = generateDailyLevel();
+  } else {
+    const levelIdx = ((gsm.level - 1) % levels.length);
+    levelData = levels[levelIdx];
+  }
 
   spawnLevel(levelData);
 
   hideUI('levelcomplete');
   showUI('hud');
 
-  // Start countdown
   gsm.state = 'countdown';
   countdownVal = 3;
   countdownTimer = 1;
   showUI('countdown');
   updateCountdown();
   audio.playCountdownTick();
+}
+
+function generateDailyLevel(): LevelData {
+  const seed = getDailyChallengeSeed();
+  const rng = seededRandom(seed);
+  const rows = 6 + Math.floor(rng() * 3); // 6-8 rows
+  const cols = 8;
+  const types = [BrickType.NORMAL, BrickType.TOUGH, BrickType.ARMORED, BrickType.EXPLOSIVE, BrickType.GOLDEN, BrickType.INDESTRUCTIBLE];
+
+  const grid: BrickType[][] = [];
+  for (let r = 0; r < rows; r++) {
+    grid[r] = [];
+    for (let c = 0; c < cols; c++) {
+      const roll = rng();
+      if (roll < 0.1) { grid[r][c] = -1 as any; continue; }
+      if (roll < 0.35) grid[r][c] = BrickType.NORMAL;
+      else if (roll < 0.55) grid[r][c] = BrickType.TOUGH;
+      else if (roll < 0.7) grid[r][c] = BrickType.ARMORED;
+      else if (roll < 0.8) grid[r][c] = BrickType.EXPLOSIVE;
+      else if (roll < 0.88) grid[r][c] = BrickType.GOLDEN;
+      else grid[r][c] = BrickType.INDESTRUCTIBLE;
+    }
+  }
+
+  return { name: `Daily ${seed}`, rows, cols, grid };
 }
 
 function onLevelComplete() {
@@ -1033,10 +1058,19 @@ function onLevelComplete() {
 
   const elapsed = (Date.now() - gsm.levelStartTime) / 1000;
   if (elapsed < 30) checkAchievement('speed_clear');
-  if (gsm.ballsLost === 0) checkAchievement('no_miss');
+  if (levelBallsLost === 0) {
+    checkAchievement('no_miss');
+    profile.perfectLevels++;
+    if (profile.perfectLevels >= 3) checkAchievement('perfect_3');
+  }
+  if (levelPowerupsUsed === 0) checkAchievement('no_powerup');
 
   if (gsm.level >= 5) checkAchievement('level_5');
   if (gsm.level >= 10) checkAchievement('level_10');
+  if (gsm.level >= 20) checkAchievement('level_20');
+  if (gsm.level >= 24) checkAchievement('level_24');
+
+  if (gsm.mode === 'endless' && gsm.level >= 50) checkAchievement('endless_50');
 
   showUI('levelcomplete');
   updateLevelComplete();
@@ -1046,8 +1080,84 @@ function onGameOver() {
   gsm.state = 'gameover';
   audio.playGameOver();
   gsm.addToLeaderboard();
+
+  // Calculate and award XP
+  const levelsCleared = gsm.level - 1;
+  const xpEarned = calculateGameXP(gsm.score, gsm.bricksDestroyed, levelsCleared, gsm.maxCombo, gsm.mode);
+  const oldLevel = profile.level;
+  profile.xp += xpEarned;
+  profile.level = getLevelFromXP(profile.xp);
+  profile.totalGames++;
+  profile.totalBricks += gsm.bricksDestroyed;
+  profile.totalScore += gsm.score;
+  profile.totalPlayTime += (Date.now() - gameStartTime) / 1000;
+  if (gsm.score > profile.bestScore) profile.bestScore = gsm.score;
+  if (gsm.maxCombo > profile.bestCombo) profile.bestCombo = gsm.maxCombo;
+  if (gsm.level > profile.bestLevel) profile.bestLevel = gsm.level;
+  profile.powerupsCollected += gsm.powerupsCollected;
+  profile.ballsLost += gsm.ballsLost;
+  profile.explosiveChains += gsm.explosiveChains;
+  profile.goldenBricks += gsm.goldensDestroyed;
+  profile.laserHits += gsm.laserHits;
+  profile.fireballHits += gsm.fireballHits;
+  profile.shieldSaves += gsm.shieldSaves;
+
+  // Daily challenge tracking
+  if (gsm.mode === 'daily') {
+    const today = getDailyChallengeSeed();
+    if (profile.dailyChallengeDate !== today) {
+      profile.dailyChallengesCompleted++;
+      profile.dailyChallengeDate = today;
+      profile.dailyChallengeScore = gsm.score;
+      checkAchievement('daily_1');
+      if (profile.dailyChallengesCompleted >= 7) checkAchievement('daily_7');
+    } else if (gsm.score > profile.dailyChallengeScore) {
+      profile.dailyChallengeScore = gsm.score;
+    }
+  }
+
+  // Check progression unlocks
+  if (profile.level !== oldLevel) {
+    const newUnlocks = getAvailableUnlocks(profile.level).filter(u =>
+      u.requiredLevel > oldLevel && u.requiredLevel <= profile.level
+    );
+    for (const unlock of newUnlocks) {
+      if (unlock.type === 'ball_skin' && !profile.unlockedBallSkins.includes(unlock.id)) {
+        profile.unlockedBallSkins.push(unlock.id);
+      }
+      if (unlock.type === 'paddle_skin' && !profile.unlockedPaddleSkins.includes(unlock.id)) {
+        profile.unlockedPaddleSkins.push(unlock.id);
+      }
+    }
+    // Check all skins achievement
+    if (profile.unlockedBallSkins.length >= BALL_SKINS.length &&
+      profile.unlockedPaddleSkins.length >= PADDLE_SKINS.length) {
+      checkAchievement('all_skins');
+    }
+  }
+
+  // XP-based achievements
+  if (profile.level >= 10) checkAchievement('xp_level_10');
+  if (profile.level >= 25) checkAchievement('xp_level_25');
+  if (profile.level >= 50) checkAchievement('xp_level_50');
+  if (profile.totalGames >= 10) checkAchievement('games_10');
+  if (profile.totalGames >= 50) checkAchievement('games_50');
+  if (profile.totalBricks >= 500) checkAchievement('bricks_500');
+  if (profile.totalBricks >= 2000) checkAchievement('bricks_2000');
+
+  saveProfile(profile);
+
   showUI('gameover');
-  updateGameOver();
+  updateGameOver(xpEarned);
+
+  // Show level-up notification
+  if (profile.level > oldLevel) {
+    setTimeout(() => {
+      showUI('levelup');
+      updateLevelUp(profile.level, xpEarned, oldLevel);
+      setTimeout(() => hideUI('levelup'), 3000);
+    }, 1500);
+  }
 }
 
 // ─── Input ───
@@ -1055,7 +1165,6 @@ let mouseX = 0;
 let laserCooldown = 0;
 
 function setupInputListeners() {
-  // Browser mouse
   window.addEventListener('mousemove', (e) => {
     mouseX = (e.clientX / window.innerWidth - 0.5) * FIELD_WIDTH;
   });
@@ -1090,11 +1199,9 @@ function setupInputListeners() {
 }
 
 function updatePaddleFromInput() {
-  // Browser: mouse
   const halfField = FIELD_WIDTH / 2 - PADDLE_WIDTH * paddleWidthMult / 2;
   let targetX = mouseX;
 
-  // XR: right controller
   try {
     const xr = (world.input as any).xr;
     if (xr) {
@@ -1105,46 +1212,39 @@ function updatePaddleFromInput() {
     }
   } catch { /* no XR */ }
 
-  // Keyboard
-  if (world.input.keyboard.getKeyPressed('KeyA') || world.input.keyboard.getKeyPressed('ArrowLeft')) {
+  if ((world.input as any).keyboard?.getKeyPressed('KeyA') || (world.input as any).keyboard?.getKeyPressed('ArrowLeft')) {
     targetX = paddleMesh.position.x - 2.5 * 0.016;
   }
-  if (world.input.keyboard.getKeyPressed('KeyD') || world.input.keyboard.getKeyPressed('ArrowRight')) {
+  if ((world.input as any).keyboard?.getKeyPressed('KeyD') || (world.input as any).keyboard?.getKeyPressed('ArrowRight')) {
     targetX = paddleMesh.position.x + 2.5 * 0.016;
   }
 
-  // Clamp
   targetX = Math.max(-halfField, Math.min(halfField, targetX));
   paddleMesh.position.x += (targetX - paddleMesh.position.x) * 0.2;
 
-  // XR trigger for laser/magnet release
-  try {
-    const xr = (world.input as any).xr;
-    if (xr) {
-      // Trigger press
-    }
-  } catch { /* */ }
-
-  // Laser cooldown
   if (laserCooldown > 0) laserCooldown -= 0.016;
 }
 
 // ─── UI Setup ───
 function setupUI() {
   const panels: { name: string; config: string; maxW: number; maxH: number; mode: 'world' | 'hud' | 'screen'; pos?: [number, number, number]; offset?: [number, number, number] }[] = [
-    { name: 'title', config: '/ui/title.json', maxW: 0.9, maxH: 0.7, mode: 'world', pos: [0, 1.5, -2] },
+    { name: 'title', config: '/ui/title.json', maxW: 0.9, maxH: 0.8, mode: 'world', pos: [0, 1.5, -2] },
     { name: 'modeselect', config: '/ui/modeselect.json', maxW: 0.9, maxH: 0.7, mode: 'world', pos: [0, 1.5, -2] },
     { name: 'difficulty', config: '/ui/difficulty.json', maxW: 0.7, maxH: 0.5, mode: 'world', pos: [0, 1.5, -2] },
     { name: 'hud', config: '/ui/hud.json', maxW: 0.35, maxH: 0.12, mode: 'hud', offset: [0, 0.22, -0.5] },
     { name: 'pause', config: '/ui/pause.json', maxW: 0.6, maxH: 0.5, mode: 'world', pos: [0, 1.5, -1.8] },
-    { name: 'gameover', config: '/ui/gameover.json', maxW: 0.8, maxH: 0.6, mode: 'world', pos: [0, 1.5, -2] },
+    { name: 'gameover', config: '/ui/gameover.json', maxW: 0.8, maxH: 0.7, mode: 'world', pos: [0, 1.5, -2] },
     { name: 'levelcomplete', config: '/ui/levelcomplete.json', maxW: 0.6, maxH: 0.4, mode: 'world', pos: [0, 1.5, -2] },
     { name: 'leaderboard', config: '/ui/leaderboard.json', maxW: 0.8, maxH: 0.7, mode: 'world', pos: [0, 1.5, -2] },
-    { name: 'achievements', config: '/ui/achievements.json', maxW: 0.9, maxH: 0.8, mode: 'world', pos: [0, 1.5, -2] },
+    { name: 'achievements', config: '/ui/achievements.json', maxW: 0.9, maxH: 1.0, mode: 'world', pos: [0, 1.5, -2] },
     { name: 'settings', config: '/ui/settings.json', maxW: 0.8, maxH: 0.6, mode: 'world', pos: [0, 1.5, -2] },
     { name: 'help', config: '/ui/help.json', maxW: 0.9, maxH: 0.8, mode: 'world', pos: [0, 1.5, -2] },
     { name: 'toast', config: '/ui/toast.json', maxW: 0.3, maxH: 0.06, mode: 'hud', offset: [0, -0.08, -0.5] },
     { name: 'countdown', config: '/ui/countdown.json', maxW: 0.25, maxH: 0.15, mode: 'hud', offset: [0, 0, -0.5] },
+    { name: 'profile', config: '/ui/profile.json', maxW: 0.9, maxH: 0.9, mode: 'world', pos: [0, 1.5, -2] },
+    { name: 'ballskins', config: '/ui/ballskins.json', maxW: 0.9, maxH: 0.9, mode: 'world', pos: [0, 1.5, -2] },
+    { name: 'paddleskins', config: '/ui/paddleskins.json', maxW: 0.9, maxH: 0.8, mode: 'world', pos: [0, 1.5, -2] },
+    { name: 'levelup', config: '/ui/levelup.json', maxW: 0.5, maxH: 0.3, mode: 'hud', offset: [0, 0.1, -0.6] },
   ];
 
   for (const p of panels) {
@@ -1172,9 +1272,9 @@ function setupUI() {
     uiDocs[p.name] = null;
   }
 
-  // Show title on start
   setTimeout(() => {
     showUI('title');
+    updateTitleLevel();
     wireUIEvents();
   }, 500);
 }
@@ -1222,106 +1322,97 @@ function wireUIEvents() {
     // Title
     const titleDoc = getDoc('title');
     if (titleDoc) {
-      const btnPlay = titleDoc.getElementById('btn-play');
-      btnPlay?.addEventListener('click', () => { audio.playButtonClick(); hideUI('title'); showUI('modeselect'); });
-      const btnLb = titleDoc.getElementById('btn-leaderboard');
-      btnLb?.addEventListener('click', () => { audio.playButtonClick(); hideUI('title'); showUI('leaderboard'); updateLeaderboard(); });
-      const btnAch = titleDoc.getElementById('btn-achievements');
-      btnAch?.addEventListener('click', () => { audio.playButtonClick(); hideUI('title'); showUI('achievements'); updateAchievements(); });
-      const btnSet = titleDoc.getElementById('btn-settings');
-      btnSet?.addEventListener('click', () => { audio.playButtonClick(); hideUI('title'); showUI('settings'); updateSettings(); });
-      const btnHelp = titleDoc.getElementById('btn-help');
-      btnHelp?.addEventListener('click', () => { audio.playButtonClick(); hideUI('title'); showUI('help'); });
+      titleDoc.getElementById('btn-play')?.addEventListener('click', () => { audio.playButtonClick(); hideUI('title'); showUI('modeselect'); });
+      titleDoc.getElementById('btn-daily')?.addEventListener('click', () => {
+        audio.playButtonClick();
+        hideUI('title');
+        gsm.mode = 'daily' as any;
+        showUI('difficulty');
+      });
+      titleDoc.getElementById('btn-leaderboard')?.addEventListener('click', () => { audio.playButtonClick(); hideUI('title'); showUI('leaderboard'); updateLeaderboard(); });
+      titleDoc.getElementById('btn-achievements')?.addEventListener('click', () => { audio.playButtonClick(); hideUI('title'); showUI('achievements'); updateAchievements(); });
+      titleDoc.getElementById('btn-settings')?.addEventListener('click', () => { audio.playButtonClick(); hideUI('title'); showUI('settings'); updateSettings(); });
+      titleDoc.getElementById('btn-help')?.addEventListener('click', () => { audio.playButtonClick(); hideUI('title'); showUI('help'); });
+      titleDoc.getElementById('btn-profile')?.addEventListener('click', () => { audio.playButtonClick(); hideUI('title'); showUI('profile'); updateProfile(); });
+      titleDoc.getElementById('btn-ballskins')?.addEventListener('click', () => { audio.playButtonClick(); hideUI('title'); showUI('ballskins'); updateBallSkins(); });
+      titleDoc.getElementById('btn-paddleskins')?.addEventListener('click', () => { audio.playButtonClick(); hideUI('title'); showUI('paddleskins'); updatePaddleSkins(); });
     } else { allReady = false; }
 
     // Mode select
     const modeDoc = getDoc('modeselect');
     if (modeDoc) {
-      const modes: { id: string; mode: GameStateManager['mode'] }[] = [
+      const modes: { id: string; mode: string }[] = [
         { id: 'btn-classic', mode: 'classic' },
         { id: 'btn-endless', mode: 'endless' },
         { id: 'btn-timeattack', mode: 'timeattack' },
         { id: 'btn-zen', mode: 'zen' },
       ];
       for (const m of modes) {
-        const btn = modeDoc.getElementById(m.id);
-        btn?.addEventListener('click', () => {
+        modeDoc.getElementById(m.id)?.addEventListener('click', () => {
           audio.playButtonClick();
-          gsm.mode = m.mode;
+          gsm.mode = m.mode as any;
           hideUI('modeselect');
           showUI('difficulty');
         });
       }
-      const btnBack = modeDoc.getElementById('btn-back');
-      btnBack?.addEventListener('click', () => { audio.playButtonClick(); hideUI('modeselect'); showUI('title'); });
+      modeDoc.getElementById('btn-back')?.addEventListener('click', () => { audio.playButtonClick(); hideUI('modeselect'); showUI('title'); updateTitleLevel(); });
     } else { allReady = false; }
 
     // Difficulty
     const diffDoc = getDoc('difficulty');
     if (diffDoc) {
-      const diffs: { id: string; diff: GameStateManager['difficulty'] }[] = [
+      const diffs: { id: string; diff: 'easy' | 'medium' | 'hard' }[] = [
         { id: 'btn-easy', diff: 'easy' },
         { id: 'btn-medium', diff: 'medium' },
         { id: 'btn-hard', diff: 'hard' },
       ];
       for (const d of diffs) {
-        const btn = diffDoc.getElementById(d.id);
-        btn?.addEventListener('click', () => {
+        diffDoc.getElementById(d.id)?.addEventListener('click', () => {
           audio.playButtonClick();
           gsm.difficulty = d.diff;
           hideAllUI();
           gsm.resetGame();
           gsm.themesUsed.add(gsm.selectedTheme);
           if (gsm.themesUsed.size >= 5) checkAchievement('all_themes');
+          gameStartTime = Date.now();
           startLevel();
         });
       }
-      const btnBack = diffDoc.getElementById('btn-back');
-      btnBack?.addEventListener('click', () => { audio.playButtonClick(); hideUI('difficulty'); showUI('modeselect'); });
+      diffDoc.getElementById('btn-back')?.addEventListener('click', () => { audio.playButtonClick(); hideUI('difficulty'); showUI('modeselect'); });
     } else { allReady = false; }
 
     // Pause
     const pauseDoc = getDoc('pause');
     if (pauseDoc) {
-      const btnResume = pauseDoc.getElementById('btn-resume');
-      btnResume?.addEventListener('click', () => { audio.playButtonClick(); gsm.state = 'playing'; hideUI('pause'); });
-      const btnQuit = pauseDoc.getElementById('btn-quit');
-      btnQuit?.addEventListener('click', () => { audio.playButtonClick(); hideAllUI(); gsm.state = 'title'; showUI('title'); });
+      pauseDoc.getElementById('btn-resume')?.addEventListener('click', () => { audio.playButtonClick(); gsm.state = 'playing'; hideUI('pause'); });
+      pauseDoc.getElementById('btn-quit')?.addEventListener('click', () => { audio.playButtonClick(); hideAllUI(); gsm.state = 'title'; showUI('title'); updateTitleLevel(); });
     } else { allReady = false; }
 
     // Game over
     const goDoc = getDoc('gameover');
     if (goDoc) {
-      const btnRematch = goDoc.getElementById('btn-rematch');
-      btnRematch?.addEventListener('click', () => { audio.playButtonClick(); hideAllUI(); gsm.resetGame(); startLevel(); });
-      const btnTitle = goDoc.getElementById('btn-title');
-      btnTitle?.addEventListener('click', () => { audio.playButtonClick(); hideAllUI(); gsm.state = 'title'; showUI('title'); });
+      goDoc.getElementById('btn-rematch')?.addEventListener('click', () => { audio.playButtonClick(); hideAllUI(); gsm.resetGame(); gameStartTime = Date.now(); startLevel(); });
+      goDoc.getElementById('btn-title')?.addEventListener('click', () => { audio.playButtonClick(); hideAllUI(); gsm.state = 'title'; showUI('title'); updateTitleLevel(); });
     } else { allReady = false; }
 
     // Leaderboard
     const lbDoc = getDoc('leaderboard');
     if (lbDoc) {
-      const btnBack = lbDoc.getElementById('btn-back');
-      btnBack?.addEventListener('click', () => { audio.playButtonClick(); hideUI('leaderboard'); showUI('title'); });
+      lbDoc.getElementById('btn-back')?.addEventListener('click', () => { audio.playButtonClick(); hideUI('leaderboard'); showUI('title'); updateTitleLevel(); });
     } else { allReady = false; }
 
     // Achievements
     const achDoc = getDoc('achievements');
     if (achDoc) {
-      const btnBack = achDoc.getElementById('btn-back');
-      btnBack?.addEventListener('click', () => { audio.playButtonClick(); hideUI('achievements'); showUI('title'); });
+      achDoc.getElementById('btn-back')?.addEventListener('click', () => { audio.playButtonClick(); hideUI('achievements'); showUI('title'); updateTitleLevel(); });
     } else { allReady = false; }
 
     // Settings
     const setDoc = getDoc('settings');
     if (setDoc) {
-      const btnBack = setDoc.getElementById('btn-back');
-      btnBack?.addEventListener('click', () => { audio.playButtonClick(); hideUI('settings'); showUI('title'); });
-      // Volume controls
+      setDoc.getElementById('btn-back')?.addEventListener('click', () => { audio.playButtonClick(); hideUI('settings'); showUI('title'); updateTitleLevel(); });
       ['master', 'sfx', 'music'].forEach(cat => {
-        const up = setDoc.getElementById(`btn-${cat}-up`);
-        const down = setDoc.getElementById(`btn-${cat}-down`);
-        up?.addEventListener('click', () => {
+        setDoc.getElementById(`btn-${cat}-up`)?.addEventListener('click', () => {
           audio.playButtonClick();
           if (cat === 'master') gsm.masterVolume = Math.min(1, gsm.masterVolume + 0.1);
           if (cat === 'sfx') gsm.sfxVolume = Math.min(1, gsm.sfxVolume + 0.1);
@@ -1330,7 +1421,7 @@ function wireUIEvents() {
           gsm.savePersistence();
           updateSettings();
         });
-        down?.addEventListener('click', () => {
+        setDoc.getElementById(`btn-${cat}-down`)?.addEventListener('click', () => {
           audio.playButtonClick();
           if (cat === 'master') gsm.masterVolume = Math.max(0, gsm.masterVolume - 0.1);
           if (cat === 'sfx') gsm.sfxVolume = Math.max(0, gsm.sfxVolume - 0.1);
@@ -1340,16 +1431,13 @@ function wireUIEvents() {
           updateSettings();
         });
       });
-      // Theme
-      const themePrev = setDoc.getElementById('btn-theme-prev');
-      const themeNext = setDoc.getElementById('btn-theme-next');
-      themePrev?.addEventListener('click', () => {
+      setDoc.getElementById('btn-theme-prev')?.addEventListener('click', () => {
         audio.playButtonClick();
         gsm.selectedTheme = (gsm.selectedTheme - 1 + THEMES.length) % THEMES.length;
         gsm.savePersistence();
         updateSettings();
       });
-      themeNext?.addEventListener('click', () => {
+      setDoc.getElementById('btn-theme-next')?.addEventListener('click', () => {
         audio.playButtonClick();
         gsm.selectedTheme = (gsm.selectedTheme + 1) % THEMES.length;
         gsm.savePersistence();
@@ -1360,8 +1448,48 @@ function wireUIEvents() {
     // Help
     const helpDoc = getDoc('help');
     if (helpDoc) {
-      const btnBack = helpDoc.getElementById('btn-back');
-      btnBack?.addEventListener('click', () => { audio.playButtonClick(); hideUI('help'); showUI('title'); });
+      helpDoc.getElementById('btn-back')?.addEventListener('click', () => { audio.playButtonClick(); hideUI('help'); showUI('title'); updateTitleLevel(); });
+    } else { allReady = false; }
+
+    // Profile
+    const profDoc = getDoc('profile');
+    if (profDoc) {
+      profDoc.getElementById('btn-back')?.addEventListener('click', () => { audio.playButtonClick(); hideUI('profile'); showUI('title'); updateTitleLevel(); });
+    } else { allReady = false; }
+
+    // Ball skins
+    const bsDoc = getDoc('ballskins');
+    if (bsDoc) {
+      bsDoc.getElementById('btn-back')?.addEventListener('click', () => { audio.playButtonClick(); hideUI('ballskins'); showUI('title'); updateTitleLevel(); });
+      for (let i = 0; i < BALL_SKINS.length; i++) {
+        bsDoc.getElementById(`ball-${i}`)?.addEventListener('click', () => {
+          audio.playButtonClick();
+          const skin = BALL_SKINS[i];
+          if (profile.unlockedBallSkins.includes(skin.id)) {
+            profile.selectedBallSkin = skin.id;
+            saveProfile(profile);
+            updateBallSkins();
+          }
+        });
+      }
+    } else { allReady = false; }
+
+    // Paddle skins
+    const psDoc = getDoc('paddleskins');
+    if (psDoc) {
+      psDoc.getElementById('btn-back')?.addEventListener('click', () => { audio.playButtonClick(); hideUI('paddleskins'); showUI('title'); updateTitleLevel(); updatePaddleSkin(); });
+      for (let i = 0; i < PADDLE_SKINS.length; i++) {
+        psDoc.getElementById(`paddle-${i}`)?.addEventListener('click', () => {
+          audio.playButtonClick();
+          const skin = PADDLE_SKINS[i];
+          if (profile.unlockedPaddleSkins.includes(skin.id)) {
+            profile.selectedPaddleSkin = skin.id;
+            saveProfile(profile);
+            updatePaddleSkins();
+            updatePaddleSkin();
+          }
+        });
+      }
     } else { allReady = false; }
 
     if (allReady) {
@@ -1375,6 +1503,11 @@ function wireUIEvents() {
 }
 
 // ─── UI Update Functions ───
+function updateTitleLevel() {
+  const doc = getDoc('title');
+  setText(doc, 'title-level', `Level ${profile.level}`);
+}
+
 function updateHUD() {
   const doc = getDoc('hud');
   setText(doc, 'score-val', String(gsm.score));
@@ -1395,18 +1528,21 @@ function updateCountdown() {
 
 function updateLevelComplete() {
   const doc = getDoc('levelcomplete');
-  setText(doc, 'level-name', getLevels()[(gsm.level - 1) % getLevels().length].name);
+  const levels = getLevels();
+  const levelName = gsm.mode === 'daily' ? 'Daily Challenge' : levels[(gsm.level - 1) % levels.length].name;
+  setText(doc, 'level-name', levelName);
   setText(doc, 'score-val', String(gsm.score));
   setText(doc, 'combo-val', `Best: x${gsm.maxCombo}`);
 }
 
-function updateGameOver() {
+function updateGameOver(xpEarned = 0) {
   const doc = getDoc('gameover');
   setText(doc, 'title-text', gsm.lives <= 0 ? 'GAME OVER' : 'TIME UP!');
   setText(doc, 'score-val', String(gsm.score));
   setText(doc, 'level-val', `Level ${gsm.level}`);
   setText(doc, 'bricks-val', `${gsm.bricksDestroyed} bricks`);
   setText(doc, 'combo-val', `Best combo: x${gsm.maxCombo}`);
+  setText(doc, 'xp-val', `+${xpEarned}`);
 }
 
 function updateLeaderboard() {
@@ -1423,11 +1559,14 @@ function updateLeaderboard() {
 function updateAchievements() {
   const doc = getDoc('achievements');
   if (!doc) return;
+  let unlocked = 0;
   for (let i = 0; i < ACHIEVEMENTS.length; i++) {
     const a = ACHIEVEMENTS[i];
-    const unlocked = gsm.achievements[a.id] || false;
-    setText(doc, `ach-${i}`, `${unlocked ? '[*]' : '[ ]'} ${a.name} - ${a.desc}`);
+    const isUnlocked = gsm.achievements[a.id] || false;
+    if (isUnlocked) unlocked++;
+    setText(doc, `ach-${i}`, `${isUnlocked ? '[*]' : '[ ]'} ${a.name} - ${a.desc}`);
   }
+  setText(doc, 'ach-counter', `${unlocked} / ${ACHIEVEMENTS.length}`);
 }
 
 function updateSettings() {
@@ -1436,6 +1575,78 @@ function updateSettings() {
   setText(doc, 'sfx-val', `${Math.round(gsm.sfxVolume * 100)}%`);
   setText(doc, 'music-val', `${Math.round(gsm.musicVolume * 100)}%`);
   setText(doc, 'theme-val', THEMES[gsm.selectedTheme].name);
+}
+
+function updateProfile() {
+  const doc = getDoc('profile');
+  if (!doc) return;
+  const progress = getXPProgressInLevel(profile.xp);
+  setText(doc, 'player-level', String(profile.level));
+  setText(doc, 'xp-text', profile.level >= 50 ? 'MAX LEVEL' : `${progress.current} / ${progress.needed} XP`);
+  setText(doc, 'stat-games', String(profile.totalGames));
+  setText(doc, 'stat-score', String(profile.totalScore));
+  setText(doc, 'stat-best-score', String(profile.bestScore));
+  setText(doc, 'stat-bricks', String(profile.totalBricks));
+  setText(doc, 'stat-combo', `x${profile.bestCombo}`);
+  setText(doc, 'stat-level', String(profile.bestLevel));
+  const hours = Math.floor(profile.totalPlayTime / 3600);
+  const mins = Math.floor((profile.totalPlayTime % 3600) / 60);
+  setText(doc, 'stat-time', `${hours}h ${mins}m`);
+  setText(doc, 'stat-perfect', String(profile.perfectLevels));
+  setText(doc, 'stat-won', String(profile.gamesWon));
+  setText(doc, 'stat-daily', String(profile.dailyChallengesCompleted));
+}
+
+function updateBallSkins() {
+  const doc = getDoc('ballskins');
+  if (!doc) return;
+  for (let i = 0; i < BALL_SKINS.length; i++) {
+    const skin = BALL_SKINS[i];
+    const unlocked = profile.unlockedBallSkins.includes(skin.id);
+    const equipped = profile.selectedBallSkin === skin.id;
+    setText(doc, `ball-${i}-name`, skin.name);
+    const unlock = UNLOCKS.find(u => u.id === skin.id);
+    if (equipped) {
+      setText(doc, `ball-${i}-status`, 'EQUIPPED');
+    } else if (unlocked) {
+      setText(doc, `ball-${i}-status`, 'SELECT');
+    } else {
+      setText(doc, `ball-${i}-status`, unlock ? `Lv ${unlock.requiredLevel}` : 'LOCKED');
+    }
+  }
+}
+
+function updatePaddleSkins() {
+  const doc = getDoc('paddleskins');
+  if (!doc) return;
+  for (let i = 0; i < PADDLE_SKINS.length; i++) {
+    const skin = PADDLE_SKINS[i];
+    const unlocked = profile.unlockedPaddleSkins.includes(skin.id);
+    const equipped = profile.selectedPaddleSkin === skin.id;
+    setText(doc, `paddle-${i}-name`, skin.name);
+    const unlock = UNLOCKS.find(u => u.id === skin.id);
+    if (equipped) {
+      setText(doc, `paddle-${i}-status`, 'EQUIPPED');
+    } else if (unlocked) {
+      setText(doc, `paddle-${i}-status`, 'SELECT');
+    } else {
+      setText(doc, `paddle-${i}-status`, unlock ? `Lv ${unlock.requiredLevel}` : 'LOCKED');
+    }
+  }
+}
+
+function updateLevelUp(newLevel: number, xpEarned: number, oldLevel: number) {
+  const doc = getDoc('levelup');
+  setText(doc, 'levelup-text', `Level ${newLevel}`);
+  setText(doc, 'levelup-xp', `+${xpEarned} XP`);
+  const newUnlocks = getAvailableUnlocks(newLevel).filter(u =>
+    u.requiredLevel > oldLevel && u.requiredLevel <= newLevel
+  );
+  if (newUnlocks.length > 0) {
+    setText(doc, 'levelup-unlock', `Unlocked: ${newUnlocks.map(u => u.name).join(', ')}`);
+  } else {
+    setText(doc, 'levelup-unlock', '');
+  }
 }
 
 // ─── Toast ───

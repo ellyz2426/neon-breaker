@@ -1,0 +1,33 @@
+<panel width="380" height="420" background-color="#000a14e8" border-radius="18" padding="18" flex-direction="column" align-items="center" gap="10">
+  <text id="profile-title" font-size="28" font-weight="bold" color="#00ffff">PROFILE</text>
+  
+  <panel width="340" height="50" background-color="#00ffff18" border-radius="10" padding="8" flex-direction="row" align-items="center" gap="10">
+    <text font-size="16" color="#00ffff80">LEVEL</text>
+    <text id="player-level" font-size="28" font-weight="bold" color="#00ffff">1</text>
+    <panel flex-grow="1" />
+    <text id="xp-text" font-size="14" color="#00ffff80">0 / 200 XP</text>
+  </panel>
+  
+  <panel width="340" height="10" background-color="#00ffff20" border-radius="5">
+    <panel id="xp-bar" width="0" height="10" background-color="#00ffff" border-radius="5" />
+  </panel>
+
+  <text font-size="18" font-weight="bold" color="#00ffff" margin-top="8">CAREER STATS</text>
+
+  <panel width="340" flex-direction="column" gap="4">
+    <panel flex-direction="row" justify-content="space-between"><text font-size="13" color="#00ffff80">Total Games</text><text id="stat-games" font-size="13" color="#00ffff">0</text></panel>
+    <panel flex-direction="row" justify-content="space-between"><text font-size="13" color="#00ffff80">Total Score</text><text id="stat-score" font-size="13" color="#00ffff">0</text></panel>
+    <panel flex-direction="row" justify-content="space-between"><text font-size="13" color="#00ffff80">Best Score</text><text id="stat-best-score" font-size="13" color="#00ffff">0</text></panel>
+    <panel flex-direction="row" justify-content="space-between"><text font-size="13" color="#00ffff80">Total Bricks</text><text id="stat-bricks" font-size="13" color="#00ffff">0</text></panel>
+    <panel flex-direction="row" justify-content="space-between"><text font-size="13" color="#00ffff80">Best Combo</text><text id="stat-combo" font-size="13" color="#00ffff">0</text></panel>
+    <panel flex-direction="row" justify-content="space-between"><text font-size="13" color="#00ffff80">Best Level</text><text id="stat-level" font-size="13" color="#00ffff">0</text></panel>
+    <panel flex-direction="row" justify-content="space-between"><text font-size="13" color="#00ffff80">Play Time</text><text id="stat-time" font-size="13" color="#00ffff">0h 0m</text></panel>
+    <panel flex-direction="row" justify-content="space-between"><text font-size="13" color="#00ffff80">Perfect Levels</text><text id="stat-perfect" font-size="13" color="#00ffff">0</text></panel>
+    <panel flex-direction="row" justify-content="space-between"><text font-size="13" color="#00ffff80">Games Won</text><text id="stat-won" font-size="13" color="#00ffff">0</text></panel>
+    <panel flex-direction="row" justify-content="space-between"><text font-size="13" color="#00ffff80">Dailies Done</text><text id="stat-daily" font-size="13" color="#00ffff">0</text></panel>
+  </panel>
+
+  <panel id="btn-back" width="160" height="36" background-color="#00ffff30" border-radius="8" justify-content="center" align-items="center" hover-background-color="#00ffff50" cursor="pointer" margin-top="8">
+    <text font-size="15" font-weight="bold" color="#00ffff">BACK</text>
+  </panel>
+</panel>

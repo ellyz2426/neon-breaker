@@ -102,17 +102,23 @@ export interface Achievement {
 }
 
 export const ACHIEVEMENTS: Achievement[] = [
+  // Original 20
   { id: 'first_break', name: 'First Break', desc: 'Destroy your first brick', unlocked: false },
   { id: 'level_5', name: 'Brick Buster', desc: 'Complete level 5', unlocked: false },
   { id: 'level_10', name: 'Demolition Expert', desc: 'Complete level 10', unlocked: false },
+  { id: 'level_20', name: 'Wall Crusher', desc: 'Complete level 20', unlocked: false },
+  { id: 'level_24', name: 'Final Boss', desc: 'Complete all 24 levels', unlocked: false },
   { id: 'combo_5', name: 'Combo Starter', desc: 'Reach a 5x combo', unlocked: false },
   { id: 'combo_10', name: 'Combo Master', desc: 'Reach a 10x combo', unlocked: false },
   { id: 'combo_25', name: 'Combo Legend', desc: 'Reach a 25x combo', unlocked: false },
+  { id: 'combo_50', name: 'Combo God', desc: 'Reach a 50x combo', unlocked: false },
   { id: 'score_10k', name: 'Ten Grand', desc: 'Score 10,000 points', unlocked: false },
   { id: 'score_50k', name: 'High Roller', desc: 'Score 50,000 points', unlocked: false },
   { id: 'score_100k', name: 'Century Club', desc: 'Score 100,000 points', unlocked: false },
+  { id: 'score_500k', name: 'Half Million', desc: 'Score 500,000 points', unlocked: false },
   { id: 'multi_ball', name: 'Ball Storm', desc: 'Have 3+ balls active at once', unlocked: false },
   { id: 'powerup_5', name: 'Power Hungry', desc: 'Collect 5 power-ups in one game', unlocked: false },
+  { id: 'powerup_20', name: 'Power Addict', desc: 'Collect 20 power-ups in one game', unlocked: false },
   { id: 'no_miss', name: 'Perfect Level', desc: 'Clear a level without losing a ball', unlocked: false },
   { id: 'fireball', name: 'Through the Fire', desc: 'Destroy 10 bricks with fireball', unlocked: false },
   { id: 'explosive', name: 'Chain Reaction', desc: 'Trigger 3 explosive bricks in one chain', unlocked: false },
@@ -122,6 +128,22 @@ export const ACHIEVEMENTS: Achievement[] = [
   { id: 'speed_clear', name: 'Speed Demon', desc: 'Clear a level in under 30 seconds', unlocked: false },
   { id: 'all_themes', name: 'Decorator', desc: 'Play with all 5 themes', unlocked: false },
   { id: 'endurance', name: 'Endurance', desc: 'Play for 20+ minutes in one session', unlocked: false },
+  // New 15
+  { id: 'xp_level_10', name: 'Rising Star', desc: 'Reach player level 10', unlocked: false },
+  { id: 'xp_level_25', name: 'Veteran', desc: 'Reach player level 25', unlocked: false },
+  { id: 'xp_level_50', name: 'Grandmaster', desc: 'Reach player level 50', unlocked: false },
+  { id: 'games_10', name: 'Regular', desc: 'Play 10 games', unlocked: false },
+  { id: 'games_50', name: 'Dedicated', desc: 'Play 50 games', unlocked: false },
+  { id: 'daily_1', name: 'Daily Player', desc: 'Complete a Daily Challenge', unlocked: false },
+  { id: 'daily_7', name: 'Weekly Warrior', desc: 'Complete 7 Daily Challenges', unlocked: false },
+  { id: 'bricks_500', name: 'Destroyer', desc: 'Destroy 500 bricks total', unlocked: false },
+  { id: 'bricks_2000', name: 'Annihilator', desc: 'Destroy 2,000 bricks total', unlocked: false },
+  { id: 'perfect_3', name: 'Triple Perfection', desc: 'Clear 3 levels without losing a ball', unlocked: false },
+  { id: 'endless_50', name: 'Marathon Runner', desc: 'Reach level 50 in Endless mode', unlocked: false },
+  { id: 'time_60k', name: 'Time Master', desc: 'Score 60,000+ in Time Attack', unlocked: false },
+  { id: 'no_powerup', name: 'Purist', desc: 'Clear a level without using power-ups', unlocked: false },
+  { id: 'all_skins', name: 'Collector', desc: 'Unlock all ball and paddle skins', unlocked: false },
+  { id: 'explosive_5', name: 'Pyromaniac', desc: 'Trigger 5 explosive chains in one level', unlocked: false },
 ];
 
 // ─── Level Data ───
@@ -253,6 +275,186 @@ export function getLevels(): LevelData[] {
         return BrickType.TOUGH;
       }),
     },
+    // Level 13: Hourglass
+    {
+      name: 'Hourglass', rows: 8, cols: 8,
+      grid: createGrid(8, 8, (r, c) => {
+        const w = r <= 3 ? (4 - r) : (r - 3);
+        if (c < w || c >= 8 - w) return -1;
+        if (r === 0 || r === 7) return BrickType.ARMORED;
+        if (r === 3 || r === 4) return BrickType.GOLDEN;
+        return r <= 2 ? BrickType.TOUGH : BrickType.NORMAL;
+      }),
+    },
+    // Level 14: Cross
+    {
+      name: 'Cross', rows: 7, cols: 8,
+      grid: createGrid(7, 8, (r, c) => {
+        const isVert = c >= 3 && c <= 4;
+        const isHoriz = r >= 2 && r <= 4;
+        if (!isVert && !isHoriz) return -1;
+        if (r === 3 && (c === 3 || c === 4)) return BrickType.EXPLOSIVE;
+        if (isVert && isHoriz) return BrickType.ARMORED;
+        return BrickType.TOUGH;
+      }),
+    },
+    // Level 15: Columns
+    {
+      name: 'Columns', rows: 8, cols: 8,
+      grid: createGrid(8, 8, (r, c) => {
+        if (c % 2 !== 0) return -1;
+        if (r === 0) return BrickType.INDESTRUCTIBLE;
+        if (r === 1) return BrickType.GOLDEN;
+        if (r <= 3) return BrickType.ARMORED;
+        return BrickType.TOUGH;
+      }),
+    },
+    // Level 16: Rings
+    {
+      name: 'Rings', rows: 7, cols: 8,
+      grid: createGrid(7, 8, (r, c) => {
+        const cx = 3.5, cy = 3;
+        const d = Math.sqrt((c - cx) ** 2 + (r - cy) ** 2);
+        if (d < 1) return BrickType.GOLDEN;
+        if (d >= 1.5 && d < 2.5) return BrickType.TOUGH;
+        if (d >= 3 && d < 4) return BrickType.NORMAL;
+        return -1;
+      }),
+    },
+    // Level 17: Invasion
+    {
+      name: 'Invasion', rows: 7, cols: 8,
+      grid: createGrid(7, 8, (r, c) => {
+        // Space invader-ish pattern
+        if (r === 0 && (c === 1 || c === 6)) return BrickType.TOUGH;
+        if (r === 1 && (c === 0 || c === 2 || c === 5 || c === 7)) return BrickType.NORMAL;
+        if (r === 1 && (c >= 3 && c <= 4)) return BrickType.EXPLOSIVE;
+        if (r === 2) return BrickType.ARMORED;
+        if (r === 3 && (c === 0 || c === 7)) return -1;
+        if (r === 3) return BrickType.TOUGH;
+        if (r === 4 && (c <= 1 || c >= 6)) return -1;
+        if (r === 4 && (c === 3 || c === 4)) return BrickType.GOLDEN;
+        if (r === 4) return BrickType.NORMAL;
+        if (r === 5 && (c === 2 || c === 5)) return BrickType.NORMAL;
+        if (r === 6 && (c === 1 || c === 6)) return BrickType.NORMAL;
+        return -1;
+      }),
+    },
+    // Level 18: Maze
+    {
+      name: 'Maze', rows: 8, cols: 8,
+      grid: createGrid(8, 8, (r, c) => {
+        // Maze-like walls with golden prizes
+        if (r === 0) return BrickType.INDESTRUCTIBLE;
+        if (r === 2 && c >= 2) return BrickType.INDESTRUCTIBLE;
+        if (r === 4 && c <= 5) return BrickType.INDESTRUCTIBLE;
+        if (r === 6 && c >= 2) return BrickType.INDESTRUCTIBLE;
+        if (r === 1 && c === 7) return BrickType.GOLDEN;
+        if (r === 3 && c === 0) return BrickType.GOLDEN;
+        if (r === 5 && c === 7) return BrickType.GOLDEN;
+        if (r === 7 && c === 0) return BrickType.GOLDEN;
+        return BrickType.NORMAL;
+      }),
+    },
+    // Level 19: Arrow
+    {
+      name: 'Arrow', rows: 7, cols: 8,
+      grid: createGrid(7, 8, (r, c) => {
+        const cx = 3.5;
+        // Arrow head pointing up
+        if (r <= 3) {
+          const width = r;
+          if (Math.abs(c - cx) <= width + 0.5) {
+            if (r === 0) return BrickType.GOLDEN;
+            if (r === 1) return BrickType.ARMORED;
+            return BrickType.TOUGH;
+          }
+          return -1;
+        }
+        // Arrow shaft
+        if (c >= 3 && c <= 4) return BrickType.NORMAL;
+        return -1;
+      }),
+    },
+    // Level 20: Explosive Grid
+    {
+      name: 'Detonation', rows: 7, cols: 8,
+      grid: createGrid(7, 8, (r, c) => {
+        if ((r + c) % 2 === 0) return BrickType.EXPLOSIVE;
+        if (r <= 1) return BrickType.ARMORED;
+        if (r >= 5) return BrickType.ARMORED;
+        return BrickType.NORMAL;
+      }),
+    },
+    // Level 21: Castle
+    {
+      name: 'Castle', rows: 8, cols: 8,
+      grid: createGrid(8, 8, (r, c) => {
+        // Battlements
+        if (r === 0 && (c % 2 === 0)) return BrickType.ARMORED;
+        if (r === 0 && (c % 2 === 1)) return -1;
+        if (r === 1) return BrickType.ARMORED;
+        // Walls
+        if (r >= 2 && r <= 5 && (c === 0 || c === 7)) return BrickType.INDESTRUCTIBLE;
+        if (r >= 2 && r <= 5 && (c === 1 || c === 6)) return BrickType.TOUGH;
+        // Gate
+        if (r >= 5 && r <= 7 && c >= 3 && c <= 4) return BrickType.GOLDEN;
+        if (r >= 2 && r <= 4 && c >= 3 && c <= 4) return BrickType.EXPLOSIVE;
+        // Fill
+        if (r >= 2 && r <= 7 && c >= 2 && c <= 5) return BrickType.NORMAL;
+        if (r >= 6) return BrickType.TOUGH;
+        return -1;
+      }),
+    },
+    // Level 22: Mirror
+    {
+      name: 'Mirror', rows: 7, cols: 8,
+      grid: createGrid(7, 8, (r, c) => {
+        // Symmetric pattern
+        const mc = c <= 3 ? c : 7 - c;
+        const mr = r <= 3 ? r : 6 - r;
+        if (mc === 0 && mr === 0) return BrickType.INDESTRUCTIBLE;
+        if (mc === 0 || mr === 0) return BrickType.ARMORED;
+        if (mc === mr) return BrickType.GOLDEN;
+        if (mc < mr) return BrickType.TOUGH;
+        return BrickType.NORMAL;
+      }),
+    },
+    // Level 23: Gauntlet
+    {
+      name: 'Gauntlet', rows: 8, cols: 8,
+      grid: createGrid(8, 8, (r, c) => {
+        if (r % 2 === 0) {
+          if (c === 0 || c === 7) return BrickType.INDESTRUCTIBLE;
+          if (c === 1 || c === 6) return BrickType.ARMORED;
+          return BrickType.TOUGH;
+        } else {
+          if (c >= 2 && c <= 5) return -1;
+          if (r === 3 && (c === 0 || c === 7)) return BrickType.GOLDEN;
+          return BrickType.EXPLOSIVE;
+        }
+      }),
+    },
+    // Level 24: Omega
+    {
+      name: 'Omega', rows: 8, cols: 8,
+      grid: createGrid(8, 8, (r, c) => {
+        // Dense final level with every brick type
+        if (r === 0 && (c === 0 || c === 7)) return BrickType.INDESTRUCTIBLE;
+        if (r === 0) return BrickType.ARMORED;
+        if (r === 1 && (c === 0 || c === 7)) return BrickType.INDESTRUCTIBLE;
+        if (r === 1) return BrickType.TOUGH;
+        if (r === 2 && (c === 2 || c === 5)) return BrickType.EXPLOSIVE;
+        if (r === 2) return BrickType.ARMORED;
+        if (r === 3) return c === 3 || c === 4 ? BrickType.GOLDEN : BrickType.TOUGH;
+        if (r === 4) return (c + r) % 3 === 0 ? BrickType.EXPLOSIVE : BrickType.ARMORED;
+        if (r === 5 && (c === 0 || c === 7)) return BrickType.INDESTRUCTIBLE;
+        if (r === 5) return BrickType.TOUGH;
+        if (r === 6) return c % 2 === 0 ? BrickType.GOLDEN : BrickType.ARMORED;
+        if (r === 7) return BrickType.ARMORED;
+        return BrickType.NORMAL;
+      }),
+    },
   ];
 }
 
@@ -297,7 +499,7 @@ export class GameStateManager {
   shieldSaves = 0;
   selectedTheme = 0;
   difficulty: 'easy' | 'medium' | 'hard' = 'medium';
-  mode: 'classic' | 'endless' | 'timeattack' | 'zen' = 'classic';
+  mode: 'classic' | 'endless' | 'timeattack' | 'zen' | 'daily' = 'classic';
   masterVolume = 0.7;
   sfxVolume = 0.8;
   musicVolume = 0.5;
