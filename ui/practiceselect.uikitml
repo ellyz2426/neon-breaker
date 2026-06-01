@@ -48,6 +48,21 @@
         <text id="plv-35" fontSize="10" color="#aa44ff" backgroundColor="#0d001a" padding="4">35</text>
         <text id="plv-36" fontSize="10" color="#aa44ff" backgroundColor="#0d001a" padding="4">36</text>
       </row>
+      <text id="zone-4-header" fontSize="11" fontWeight="bold" color="#ff3333">Zone 4 (L37-48)</text>
+      <row gap="4" justifyContent="center" flexWrap="wrap">
+        <text id="plv-37" fontSize="10" color="#ff3333" backgroundColor="#1a0000" padding="4">37</text>
+        <text id="plv-38" fontSize="10" color="#ff3333" backgroundColor="#1a0000" padding="4">38</text>
+        <text id="plv-39" fontSize="10" color="#ff3333" backgroundColor="#1a0000" padding="4">39</text>
+        <text id="plv-40" fontSize="10" color="#ff3333" backgroundColor="#1a0000" padding="4">40</text>
+        <text id="plv-41" fontSize="10" color="#ff3333" backgroundColor="#1a0000" padding="4">41</text>
+        <text id="plv-42" fontSize="10" color="#ff3333" backgroundColor="#1a0000" padding="4">42</text>
+        <text id="plv-43" fontSize="10" color="#ff3333" backgroundColor="#1a0000" padding="4">43</text>
+        <text id="plv-44" fontSize="10" color="#ff3333" backgroundColor="#1a0000" padding="4">44</text>
+        <text id="plv-45" fontSize="10" color="#ff3333" backgroundColor="#1a0000" padding="4">45</text>
+        <text id="plv-46" fontSize="10" color="#ff3333" backgroundColor="#1a0000" padding="4">46</text>
+        <text id="plv-47" fontSize="10" color="#ff3333" backgroundColor="#1a0000" padding="4">47</text>
+        <text id="plv-48" fontSize="10" color="#ff3333" backgroundColor="#1a0000" padding="4">48</text>
+      </row>
     </col>
     <text id="btn-practice-back" fontSize="12" fontWeight="bold" color="#00ffff" padding="8">BACK</text>
   </col>

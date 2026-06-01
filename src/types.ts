@@ -200,6 +200,17 @@ export const ACHIEVEMENTS: Achievement[] = [
   { id: 'combo_200', name: 'Combo Transcendent', desc: 'Reach a 200x combo', unlocked: false },
   { id: 'survival_no_powerup', name: 'Survival Purist', desc: 'Survive 5 waves without collecting power-ups', unlocked: false },
   { id: 'tutorial_complete', name: 'Student', desc: 'Complete the tutorial', unlocked: false },
+  // Round 6: Zone 4 & paddle abilities
+  { id: 'zone_4', name: 'Zone 4 Entry', desc: 'Reach Zone 4 (level 37)', unlocked: false },
+  { id: 'level_48', name: 'Event Horizon', desc: 'Complete all 48 levels', unlocked: false },
+  { id: 'boss_4', name: 'Horizon Breaker', desc: 'Defeat the Event Horizon Boss', unlocked: false },
+  { id: 'all_bosses', name: 'Boss Annihilator', desc: 'Defeat all 4 boss levels', unlocked: false },
+  { id: 'campaign_48', name: 'Ultimate Champion', desc: 'Beat all 48 levels in Classic', unlocked: false },
+  { id: 'dash_50', name: 'Speedster', desc: 'Use paddle dash 50 times', unlocked: false },
+  { id: 'slam_25', name: 'Earthquake', desc: 'Use paddle slam 25 times', unlocked: false },
+  { id: 'slam_hit_5', name: 'Shockwave Master', desc: 'Hit 5 bricks with a single slam', unlocked: false },
+  { id: 'score_10m', name: 'Ten Million Club', desc: 'Score 10,000,000 points total', unlocked: false },
+  { id: 'bricks_20000', name: 'Brick Obliterator', desc: 'Destroy 20,000 bricks total', unlocked: false },
 ];
 
 // ─── Level Data ───
@@ -684,6 +695,180 @@ export function getLevels(): LevelData[] {
         return BrickType.ARMORED;
       }),
     },
+    // ─── Zone 4: Levels 37–48 ───
+    // Level 37: Supernova
+    {
+      name: 'Supernova', rows: 8, cols: 8,
+      grid: createGrid(8, 8, (r, c) => {
+        const cx = 3.5, cy = 3.5;
+        const dist = Math.sqrt((c - cx) ** 2 + (r - cy) ** 2);
+        if (dist < 0.8) return BrickType.GOLDEN;
+        if (dist < 1.8) return BrickType.EXPLOSIVE;
+        if (dist < 2.8 && (r + c) % 2 === 0) return BrickType.ARMORED;
+        if (dist < 2.8) return BrickType.TOUGH;
+        if (dist < 3.8) return BrickType.NORMAL;
+        return BrickType.INDESTRUCTIBLE;
+      }),
+    },
+    // Level 38: Circuit Board
+    {
+      name: 'Circuit Board', rows: 8, cols: 8,
+      grid: createGrid(8, 8, (r, c) => {
+        // Traces + nodes
+        if (r === 0 || r === 7) return c % 3 === 0 ? BrickType.GOLDEN : BrickType.INDESTRUCTIBLE;
+        if (c === 0 || c === 7) return r % 3 === 0 ? BrickType.EXPLOSIVE : BrickType.ARMORED;
+        if (r === 2 && c <= 5) return BrickType.TOUGH;
+        if (r === 5 && c >= 2) return BrickType.TOUGH;
+        if (c === 3 && r >= 2 && r <= 5) return BrickType.ARMORED;
+        if (r === 4 && c === 5) return BrickType.GOLDEN;
+        if ((r + c) % 4 === 0) return BrickType.NORMAL;
+        return -1;
+      }),
+    },
+    // Level 39: Wormhole
+    {
+      name: 'Wormhole', rows: 8, cols: 8,
+      grid: createGrid(8, 8, (r, c) => {
+        const cx = 3.5, cy = 3.5;
+        const angle = Math.atan2(r - cy, c - cx);
+        const dist = Math.sqrt((c - cx) ** 2 + (r - cy) ** 2);
+        const spiral = (angle + Math.PI) / (2 * Math.PI) * 4;
+        if (dist < 1) return BrickType.GOLDEN;
+        if (Math.abs((dist - spiral) % 2) < 0.8) return BrickType.ARMORED;
+        if (dist > 3.5) return BrickType.INDESTRUCTIBLE;
+        return BrickType.TOUGH;
+      }),
+    },
+    // Level 40: Labyrinth
+    {
+      name: 'Labyrinth', rows: 8, cols: 8,
+      grid: createGrid(8, 8, (r, c) => {
+        // Nested rectangles with gaps
+        if (r === 0 || r === 7) return c === 4 ? -1 : BrickType.INDESTRUCTIBLE;
+        if (c === 0 || c === 7) return r === 3 ? -1 : BrickType.INDESTRUCTIBLE;
+        if ((r === 2 || r === 5) && c >= 2 && c <= 5) return c === 2 ? -1 : BrickType.ARMORED;
+        if ((c === 2 || c === 5) && r >= 2 && r <= 5) return r === 5 ? -1 : BrickType.ARMORED;
+        if (r === 3 && c === 4) return BrickType.GOLDEN;
+        if (r === 4 && c === 3) return BrickType.GOLDEN;
+        if ((r + c) % 3 === 0) return BrickType.EXPLOSIVE;
+        return BrickType.NORMAL;
+      }),
+    },
+    // Level 41: Shockwave
+    {
+      name: 'Shockwave', rows: 8, cols: 8,
+      grid: createGrid(8, 8, (r, c) => {
+        // Concentric diamond ripples
+        const cx = 3.5, cy = 3.5;
+        const md = Math.abs(c - cx) + Math.abs(r - cy);
+        if (md < 1) return BrickType.GOLDEN;
+        if (md >= 1.5 && md < 2.5) return BrickType.EXPLOSIVE;
+        if (md >= 3 && md < 4) return BrickType.ARMORED;
+        if (md >= 4.5 && md < 5.5) return BrickType.TOUGH;
+        return -1;
+      }),
+    },
+    // Level 42: Quantum Grid
+    {
+      name: 'Quantum Grid', rows: 8, cols: 8,
+      grid: createGrid(8, 8, (r, c) => {
+        // Alternating dense/sparse stripes with all types
+        const stripe = (r + c * 2) % 5;
+        if (stripe === 0) return BrickType.INDESTRUCTIBLE;
+        if (stripe === 1) return BrickType.GOLDEN;
+        if (stripe === 2) return BrickType.EXPLOSIVE;
+        if (stripe === 3) return BrickType.ARMORED;
+        return BrickType.TOUGH;
+      }),
+    },
+    // Level 43: Reactor Core
+    {
+      name: 'Reactor Core', rows: 8, cols: 8,
+      grid: createGrid(8, 8, (r, c) => {
+        // Center core surrounded by explosive ring and armor shell
+        const cx = 3.5, cy = 3.5;
+        const dist = Math.sqrt((c - cx) ** 2 + (r - cy) ** 2);
+        if (dist < 0.9) return BrickType.GOLDEN;
+        if (dist < 1.5) return BrickType.EXPLOSIVE;
+        if (dist < 2.3 && (r + c) % 2 === 0) return BrickType.ARMORED;
+        if (dist < 2.3) return BrickType.INDESTRUCTIBLE;
+        if (dist < 3.2) return BrickType.TOUGH;
+        if ((r === 0 || r === 7) || (c === 0 || c === 7)) return BrickType.ARMORED;
+        return BrickType.NORMAL;
+      }),
+    },
+    // Level 44: Domino
+    {
+      name: 'Domino', rows: 8, cols: 8,
+      grid: createGrid(8, 8, (r, c) => {
+        // Tilted columns of explosive chains
+        const col = (c + Math.floor(r / 2)) % 4;
+        if (col === 0) return BrickType.EXPLOSIVE;
+        if (col === 1) return BrickType.ARMORED;
+        if (col === 2 && (r === 0 || r === 7)) return BrickType.GOLDEN;
+        if (col === 2) return BrickType.TOUGH;
+        return BrickType.NORMAL;
+      }),
+    },
+    // Level 45: Nebula Drift
+    {
+      name: 'Nebula Drift', rows: 8, cols: 8,
+      grid: createGrid(8, 8, (r, c) => {
+        // Sinusoidal wave pattern
+        const wave = 3.5 + Math.sin(r * 1.2 + c * 0.4) * 2;
+        if (Math.abs(c - wave) < 0.7) return BrickType.GOLDEN;
+        if (Math.abs(c - wave) < 1.5) return BrickType.EXPLOSIVE;
+        if (r === 0 || r === 7) return BrickType.INDESTRUCTIBLE;
+        if ((r + c) % 3 === 0) return BrickType.ARMORED;
+        return BrickType.TOUGH;
+      }),
+    },
+    // Level 46: Iron Curtain
+    {
+      name: 'Iron Curtain', rows: 8, cols: 8,
+      grid: createGrid(8, 8, (r, c) => {
+        // Alternating indestructible rows with narrow gaps
+        if (r % 2 === 0) {
+          if (c === (r + 2) % 8) return -1; // gap
+          return BrickType.INDESTRUCTIBLE;
+        }
+        if (c === 0 || c === 7) return BrickType.GOLDEN;
+        if ((r + c) % 3 === 0) return BrickType.EXPLOSIVE;
+        return BrickType.ARMORED;
+      }),
+    },
+    // Level 47: Endurance Gauntlet
+    {
+      name: 'Endurance Gauntlet', rows: 8, cols: 8,
+      grid: createGrid(8, 8, (r, c) => {
+        // Every tile filled, maximum density
+        if ((r === 0 || r === 7) && (c === 0 || c === 7)) return BrickType.INDESTRUCTIBLE;
+        if (r === 0 || r === 7) return BrickType.ARMORED;
+        if (r === 1 || r === 6) return c % 2 === 0 ? BrickType.EXPLOSIVE : BrickType.ARMORED;
+        if (r === 3 && c === 3) return BrickType.GOLDEN;
+        if (r === 3 && c === 4) return BrickType.GOLDEN;
+        if (r === 4 && c === 3) return BrickType.GOLDEN;
+        if (r === 4 && c === 4) return BrickType.GOLDEN;
+        if ((r + c) % 4 === 0) return BrickType.EXPLOSIVE;
+        return BrickType.TOUGH;
+      }),
+    },
+    // Level 48: Event Horizon
+    {
+      name: 'Event Horizon', rows: 8, cols: 8,
+      grid: createGrid(8, 8, (r, c) => {
+        // Absolute final level — dense layered nightmare
+        const cx = 3.5, cy = 3.5;
+        const dist = Math.sqrt((c - cx) ** 2 + (r - cy) ** 2);
+        if (dist < 0.8) return BrickType.GOLDEN;
+        if (dist < 1.5 && (r + c) % 2 === 0) return BrickType.EXPLOSIVE;
+        if (dist < 1.5) return BrickType.ARMORED;
+        if (dist < 2.5) return BrickType.TOUGH;
+        if (dist < 3) return BrickType.ARMORED;
+        if ((r === 0 || r === 7) || (c === 0 || c === 7)) return BrickType.INDESTRUCTIBLE;
+        return BrickType.ARMORED;
+      }),
+    },
   ];
 }
 
@@ -728,6 +913,20 @@ export function getBossLevels(): Record<number, BossData> {
       }),
       movePattern: 'circular', moveSpeed: 0.2, moveRange: 0.08,
     },
+    48: {
+      name: 'Event Horizon Boss', rows: 8, cols: 8,
+      grid: createGrid(8, 8, (r, c) => {
+        const cx = 3.5, cy = 3.5;
+        const dist = Math.sqrt((c - cx) ** 2 + (r - cy) ** 2);
+        if (dist < 1) return BrickType.GOLDEN;
+        if (dist < 1.8 && (r + c) % 2 === 0) return BrickType.EXPLOSIVE;
+        if (dist < 1.8) return BrickType.ARMORED;
+        if (dist < 2.8) return BrickType.TOUGH;
+        if ((r === 0 || r === 7) || (c === 0 || c === 7)) return BrickType.INDESTRUCTIBLE;
+        return BrickType.ARMORED;
+      }),
+      movePattern: 'figure8' as any, moveSpeed: 0.18, moveRange: 0.1,
+    },
   };
 }
 
@@ -750,7 +949,7 @@ export interface BossData {
   rows: number;
   cols: number;
   grid: BrickType[][];
-  movePattern: 'horizontal' | 'vertical' | 'circular';
+  movePattern: 'horizontal' | 'vertical' | 'circular' | 'figure8';
   moveSpeed: number; // units per second
   moveRange: number; // amplitude
 }
@@ -811,6 +1010,8 @@ export class GameStateManager {
   megaBallSessionHits = 0;
   modesPlayed: Set<string> = new Set();
   practiceLevel = 1;
+  dashCount = 0;
+  slamCount = 0;
   masterVolume = 0.7;
   sfxVolume = 0.8;
   musicVolume = 0.5;

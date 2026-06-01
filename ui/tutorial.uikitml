@@ -17,6 +17,9 @@
     <text id="tut-14" fontSize="10" color="#ffff00">Build combos for score multipliers up to x10!</text>
     <text id="tut-15" fontSize="10" color="#cccccc">XR: Use controller to aim paddle position.</text>
     <text id="tut-16" fontSize="10" color="#cccccc">Browser: Mouse/WASD/Arrow keys + Click.</text>
+    <text id="tut-17" fontSize="10" color="#00ff88">Paddle Abilities:</text>
+    <text id="tut-18" fontSize="9" color="#44ffaa">  DASH (Shift): Quick burst in movement direction</text>
+    <text id="tut-19" fontSize="9" color="#ff4488">  SLAM (X): Shockwave damages nearby bricks</text>
     <row gap="12" justifyContent="center">
       <text id="btn-tut-play" fontSize="12" fontWeight="bold" color="#000000" backgroundColor="#00ffff" padding="8">START GAME</text>
       <text id="btn-tut-back" fontSize="12" fontWeight="bold" color="#00ffff" padding="8">BACK</text>

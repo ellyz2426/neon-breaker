@@ -71,6 +71,19 @@ const activePowerUpTimers: ActivePowerUpTimer[] = [];
 // Combo visual escalation state
 let comboGlowIntensity = 0;
 
+// Brick entry animation state
+let brickEntryAnimating = false;
+let brickEntryTimer = 0;
+const BRICK_ENTRY_DURATION = 0.6; // seconds
+
+// Paddle dash/slam abilities
+let dashCooldown = 0;
+let dashVelocity = 0;
+let dashTrailTimer = 0;
+let slamCooldown = 0;
+let slamActive = false;
+let slamImpactTimer = 0;
+
 // Boss & screen shake
 let currentBoss: BossData | null = null;
 let bossTime = 0;
@@ -234,7 +247,8 @@ function applyScreenShake(dt: number) {
 function getZoneName(level: number): string {
   if (level <= 12) return 'Zone 1';
   if (level <= 24) return 'Zone 2';
-  return 'Zone 3';
+  if (level <= 36) return 'Zone 3';
+  return 'Zone 4';
 }
 
 // ─── Init ───
@@ -528,8 +542,17 @@ function spawnLevel(levelData: LevelData) {
         x: bx, y: by,
         active: true,
       });
+
+      // Brick entry animation — start at scale 0
+      mesh.scale.setScalar(0.01);
+      edges.scale.setScalar(0.01);
+      glow.scale.setScalar(0.01);
     }
   }
+
+  // Start brick entry animation
+  brickEntryAnimating = true;
+  brickEntryTimer = 0;
 }
 
 // ─── Power-ups ───
@@ -862,6 +885,25 @@ function gameUpdate(dt: number) {
   });
 
   if (gsm.state === 'countdown') {
+    // Animate brick entry during countdown
+    if (brickEntryAnimating) {
+      brickEntryTimer += dt;
+      const t = Math.min(brickEntryTimer / BRICK_ENTRY_DURATION, 1);
+      for (const brick of activeBricks) {
+        if (!brick.active) continue;
+        // Stagger by row — later rows animate slightly later
+        const rowDelay = brick.row * 0.06;
+        const localT = Math.max(0, Math.min(1, (brickEntryTimer - rowDelay) / (BRICK_ENTRY_DURATION * 0.6)));
+        // Ease out elastic
+        const s = localT === 0 ? 0 : localT === 1 ? 1 :
+          Math.pow(2, -10 * localT) * Math.sin((localT * 10 - 0.75) * (2 * Math.PI / 3)) + 1;
+        brick.mesh.scale.setScalar(s);
+        brick.edges.scale.setScalar(s);
+        brick.glow.scale.setScalar(s);
+      }
+      if (t >= 1) brickEntryAnimating = false;
+    }
+
     countdownTimer -= dt;
     if (countdownTimer <= 0) {
       countdownVal--;
@@ -895,6 +937,69 @@ function gameUpdate(dt: number) {
   applyScreenShake(dt);
   updatePowerUpTimers(dt);
 
+  // Brick glow pulse — golden and explosive bricks pulse
+  for (const brick of activeBricks) {
+    if (!brick.active) continue;
+    if (brick.type === BrickType.GOLDEN || brick.type === BrickType.EXPLOSIVE) {
+      const pulse = 0.1 + 0.12 * Math.sin(performance.now() * 0.004 + brick.row * 0.5 + brick.col * 0.3);
+      (brick.glow.material as MeshBasicMaterial).opacity = pulse;
+      const brickMat = brick.mesh.material as MeshStandardMaterial;
+      brickMat.emissiveIntensity = brick.type === BrickType.GOLDEN
+        ? 0.8 + 0.4 * Math.sin(performance.now() * 0.003)
+        : 0.4 + 0.3 * Math.sin(performance.now() * 0.005);
+    }
+  }
+
+  // Paddle dash update
+  if (dashCooldown > 0) dashCooldown -= dt;
+  if (dashVelocity !== 0) {
+    paddleMesh.position.x += dashVelocity * dt;
+    const halfField = FIELD_WIDTH / 2 - PADDLE_WIDTH * paddleWidthMult / 2;
+    paddleMesh.position.x = Math.max(-halfField, Math.min(halfField, paddleMesh.position.x));
+    dashVelocity *= 0.88; // decelerate
+    if (Math.abs(dashVelocity) < 0.3) dashVelocity = 0;
+    // Dash trail particles
+    dashTrailTimer -= dt;
+    if (dashTrailTimer <= 0) {
+      const theme = THEMES[gsm.selectedTheme];
+      spawnParticles(paddleMesh.position.x, PADDLE_Y, theme.paddle, 2);
+      dashTrailTimer = 0.03;
+    }
+  }
+
+  // Paddle slam update
+  if (slamCooldown > 0) slamCooldown -= dt;
+  if (slamActive) {
+    slamImpactTimer -= dt;
+    if (slamImpactTimer <= 0) {
+      slamActive = false;
+      // Slam shockwave — damage nearby bricks in bottom rows
+      const slamX = paddleMesh.position.x;
+      const slamRadius = 0.4;
+      let slamHits = 0;
+      for (const brick of activeBricks) {
+        if (!brick.active || brick.type === BrickType.INDESTRUCTIBLE) continue;
+        const dx = Math.abs(brick.x - slamX);
+        const dy = brick.y - PADDLE_Y;
+        if (dx < slamRadius && dy > 0 && dy < 0.8) {
+          hitBrick(brick);
+          slamHits++;
+        }
+      }
+      if (slamHits >= 5) checkAchievement('slam_hit_5');
+      triggerScreenShake(0.015);
+      const theme = THEMES[gsm.selectedTheme];
+      // Slam visual burst
+      for (let i = 0; i < 8; i++) {
+        spawnParticles(
+          slamX + (Math.random() - 0.5) * slamRadius * 2,
+          PADDLE_Y + Math.random() * 0.3,
+          theme.accent, 3
+        );
+      }
+    }
+  }
+
   // Boss brick movement
   if (currentBoss && brickGroup) {
     bossTime += dt;
@@ -909,6 +1014,10 @@ function gameUpdate(dt: number) {
       case 'circular':
         brickGroup.position.x = Math.sin(bossTime * boss.moveSpeed * Math.PI * 2) * boss.moveRange;
         brickGroup.position.y = Math.cos(bossTime * boss.moveSpeed * Math.PI * 2) * boss.moveRange * 0.5;
+        break;
+      case 'figure8':
+        brickGroup.position.x = Math.sin(bossTime * boss.moveSpeed * Math.PI * 2) * boss.moveRange;
+        brickGroup.position.y = Math.sin(bossTime * boss.moveSpeed * Math.PI * 4) * boss.moveRange * 0.5;
         break;
     }
     // Update actual brick positions for collision
@@ -1232,6 +1341,11 @@ function startLevel() {
   levelExplosiveChains = 0;
   activePowerUpTimers.length = 0;
   megaBallKillsThisActivation = 0;
+  dashVelocity = 0;
+  dashCooldown = 0;
+  slamActive = false;
+  slamCooldown = 0;
+  slamImpactTimer = 0;
   hideUI('powerups');
 
   const levels = getLevels();
@@ -1278,6 +1392,7 @@ function startLevel() {
   // Zone achievements
   if (gsm.level >= 13) checkAchievement('zone_2');
   if (gsm.level >= 25) checkAchievement('zone_3');
+  if (gsm.level >= 37) checkAchievement('zone_4');
 
   spawnLevel(levelData);
 
@@ -1362,6 +1477,7 @@ function onLevelComplete() {
   if (gsm.level >= 20) checkAchievement('level_20');
   if (gsm.level >= 24) checkAchievement('level_24');
   if (gsm.level >= 36) checkAchievement('level_36');
+  if (gsm.level >= 48) checkAchievement('level_48');
 
   if (gsm.mode === 'endless' && gsm.level >= 50) checkAchievement('endless_50');
 
@@ -1393,6 +1509,8 @@ function onLevelComplete() {
     gsm.savePersistence();
     checkAchievement('boss_slayer');
     if (gsm.bossesDefeated.size >= 3) checkAchievement('boss_master');
+    if (gsm.bossesDefeated.size >= 4) checkAchievement('all_bosses');
+    if (gsm.level === 48) checkAchievement('boss_4');
     if (levelBallsLost === 0) checkAchievement('all_bosses_no_miss');
     triggerScreenShake(0.02);
   }
@@ -1404,9 +1522,10 @@ function onLevelComplete() {
   showUI('levelcomplete');
   updateLevelComplete();
 
-  // Campaign victory — completed all 36 levels in Classic
-  if (gsm.mode === 'classic' && gsm.level >= 36) {
+  // Campaign victory — completed all 48 levels in Classic
+  if (gsm.mode === 'classic' && gsm.level >= 48) {
     checkAchievement('campaign_victory');
+    checkAchievement('campaign_48');
     profile.campaignCompleted = true;
     saveProfile(profile);
     setTimeout(() => {
@@ -1505,7 +1624,9 @@ function onGameOver() {
 
   // Extended career achievements
   if (profile.totalScore >= 5000000) checkAchievement('score_5m');
+  if (profile.totalScore >= 10000000) checkAchievement('score_10m');
   if (profile.totalBricks >= 10000) checkAchievement('bricks_10000');
+  if (profile.totalBricks >= 20000) checkAchievement('bricks_20000');
 
   // Check progression unlocks
   if (profile.level !== oldLevel) {
@@ -1556,7 +1677,7 @@ function onGameOver() {
 
 // ─── Campaign Victory ───
 function onCampaignVictory() {
-  const levelsCleared = 36;
+  const levelsCleared = 48;
   let xpEarned = calculateGameXP(gsm.score, gsm.bricksDestroyed, levelsCleared, gsm.maxCombo, gsm.mode);
   xpEarned = Math.floor(xpEarned * gsm.getModifierXPMultiplier() * 1.5); // 50% campaign bonus
   const oldLevel = profile.level;
@@ -1570,7 +1691,7 @@ function onCampaignVictory() {
   profile.totalPlayTime += (Date.now() - gameStartTime) / 1000;
   if (gsm.score > profile.bestScore) profile.bestScore = gsm.score;
   if (gsm.maxCombo > profile.bestCombo) profile.bestCombo = gsm.maxCombo;
-  profile.bestLevel = 36;
+  profile.bestLevel = 48;
   profile.gamesWon++;
   if (!profile.bestScoreByMode['classic'] || gsm.score > profile.bestScoreByMode['classic']) {
     profile.bestScoreByMode['classic'] = gsm.score;
@@ -1652,6 +1773,28 @@ function setupInputListeners() {
         gsm.state = 'playing';
         hideUI('pause');
       }
+    }
+    // Paddle dash — Shift key
+    if ((e.key === 'Shift' || e.key === 'ShiftLeft') && gsm.state === 'playing' && dashCooldown <= 0) {
+      const kbLeft = (world.input as any).keyboard?.getKeyPressed?.('KeyA') ||
+                     (world.input as any).keyboard?.getKeyPressed?.('ArrowLeft');
+      const dir = kbLeft ? -1 : 1;
+      dashVelocity = dir * 8;
+      dashCooldown = 0.8;
+      dashTrailTimer = 0;
+      gsm.dashCount++;
+      if (gsm.dashCount >= 50) checkAchievement('dash_50');
+      audio.playWallBounce(); // reuse bounce as dash sfx
+    }
+    // Paddle slam — X key
+    if ((e.key === 'x' || e.key === 'X') && gsm.state === 'playing' && slamCooldown <= 0) {
+      slamActive = true;
+      slamImpactTimer = 0.15;
+      slamCooldown = 2.0;
+      gsm.slamCount++;
+      if (gsm.slamCount >= 25) checkAchievement('slam_25');
+      audio.playPaddleHit();
+      triggerScreenShake(0.008);
     }
   });
 }
@@ -2034,7 +2177,7 @@ function wireUIEvents() {
     // Practice Select
     const pracDoc = getDoc('practiceselect');
     if (pracDoc) {
-      for (let lv = 1; lv <= 36; lv++) {
+      for (let lv = 1; lv <= 48; lv++) {
         pracDoc.getElementById(`plv-${lv}`)?.addEventListener('click', () => {
           const maxLevel = profile.bestLevel || 1;
           if (lv > maxLevel) {
@@ -2239,7 +2382,7 @@ function updatePracticeSelect() {
   const doc = getDoc('practiceselect');
   if (!doc) return;
   const maxLevel = profile.bestLevel || 1;
-  for (let lv = 1; lv <= 36; lv++) {
+  for (let lv = 1; lv <= 48; lv++) {
     const el = doc.getElementById(`plv-${lv}`);
     if (el && (el as any).text) {
       if (lv <= maxLevel) {
