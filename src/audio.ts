@@ -169,6 +169,28 @@ export class AudioManager {
     this.playTone(660, 0.1, 'sawtooth', 0.15);
   }
 
+  playBossIntro() {
+    // Ominous descending power chord
+    [220, 185, 147, 110, 82.5].forEach((freq, i) => {
+      setTimeout(() => {
+        this.playTone(freq, 0.35, 'sawtooth', 0.3);
+        this.playTone(freq * 1.5, 0.3, 'square', 0.15);
+      }, i * 120);
+    });
+    setTimeout(() => this.playNoise(0.3, 0.2), 600);
+  }
+
+  playBossDefeat() {
+    // Triumphant ascending fanfare
+    const notes = [523, 659, 784, 1047, 1320, 1568];
+    notes.forEach((freq, i) => {
+      setTimeout(() => {
+        this.playTone(freq, 0.3, 'sine', 0.3);
+        this.playTone(freq * 0.5, 0.25, 'triangle', 0.15);
+      }, i * 100);
+    });
+  }
+
   playFireball() {
     this.playTone(150, 0.12, 'sawtooth', 0.2);
     this.playNoise(0.08, 0.1);
@@ -209,6 +231,48 @@ export class AudioManager {
     padFilter.connect(padGain);
     padGain.connect(this.musicGain!);
     this.musicPad.start();
+
+    // Arpeggiator
+    this.startArpeggiator();
+  }
+
+  private arpInterval: number | null = null;
+  private arpNoteIdx = 0;
+  private arpChordIdx = 0;
+  private arpChords = [
+    [110, 165, 220, 275, 330],   // Am
+    [130.8, 196, 261.6, 330, 392], // C
+    [146.8, 220, 293.7, 370, 440], // D
+    [98, 146.8, 196, 247, 293.7],  // G
+  ];
+
+  private startArpeggiator() {
+    this.arpInterval = window.setInterval(() => {
+      if (!this.ctx || !this.musicGain) return;
+      const chord = this.arpChords[this.arpChordIdx % this.arpChords.length];
+      const freq = chord[this.arpNoteIdx % chord.length];
+
+      const osc = this.ctx.createOscillator();
+      osc.type = 'triangle';
+      osc.frequency.value = freq;
+      const g = this.ctx.createGain();
+      g.gain.setValueAtTime(0.06, this.ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.25);
+      const f = this.ctx.createBiquadFilter();
+      f.type = 'lowpass';
+      f.frequency.value = 800;
+      osc.connect(f);
+      f.connect(g);
+      g.connect(this.musicGain);
+      osc.start();
+      osc.stop(this.ctx.currentTime + 0.25);
+
+      this.arpNoteIdx++;
+      if (this.arpNoteIdx >= chord.length) {
+        this.arpNoteIdx = 0;
+        this.arpChordIdx++;
+      }
+    }, 200);
   }
 
   stopMusic() {
@@ -218,5 +282,9 @@ export class AudioManager {
     this.musicOsc = null;
     this.musicLfo = null;
     this.musicPad = null;
+    if (this.arpInterval) {
+      clearInterval(this.arpInterval);
+      this.arpInterval = null;
+    }
   }
 }

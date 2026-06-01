@@ -128,7 +128,7 @@ export const ACHIEVEMENTS: Achievement[] = [
   { id: 'speed_clear', name: 'Speed Demon', desc: 'Clear a level in under 30 seconds', unlocked: false },
   { id: 'all_themes', name: 'Decorator', desc: 'Play with all 5 themes', unlocked: false },
   { id: 'endurance', name: 'Endurance', desc: 'Play for 20+ minutes in one session', unlocked: false },
-  // New 15
+  // Progression 15
   { id: 'xp_level_10', name: 'Rising Star', desc: 'Reach player level 10', unlocked: false },
   { id: 'xp_level_25', name: 'Veteran', desc: 'Reach player level 25', unlocked: false },
   { id: 'xp_level_50', name: 'Grandmaster', desc: 'Reach player level 50', unlocked: false },
@@ -144,6 +144,17 @@ export const ACHIEVEMENTS: Achievement[] = [
   { id: 'no_powerup', name: 'Purist', desc: 'Clear a level without using power-ups', unlocked: false },
   { id: 'all_skins', name: 'Collector', desc: 'Unlock all ball and paddle skins', unlocked: false },
   { id: 'explosive_5', name: 'Pyromaniac', desc: 'Trigger 5 explosive chains in one level', unlocked: false },
+  // Round 3: Boss & modifier achievements
+  { id: 'boss_slayer', name: 'Boss Slayer', desc: 'Defeat a boss level', unlocked: false },
+  { id: 'boss_master', name: 'Boss Master', desc: 'Defeat all 3 boss levels', unlocked: false },
+  { id: 'modifier_1', name: 'Risk Taker', desc: 'Complete a level with a challenge modifier', unlocked: false },
+  { id: 'modifier_3', name: 'Triple Threat', desc: 'Complete a level with all 3 modifiers active', unlocked: false },
+  { id: 'level_36', name: 'Zone Master', desc: 'Complete all 36 levels', unlocked: false },
+  { id: 'combo_100', name: 'Combo Ascendant', desc: 'Reach a 100x combo', unlocked: false },
+  { id: 'score_1m', name: 'Millionaire', desc: 'Score 1,000,000 points', unlocked: false },
+  { id: 'speed_15', name: 'Lightning Clear', desc: 'Clear a level in under 15 seconds', unlocked: false },
+  { id: 'zone_2', name: 'Zone 2 Entry', desc: 'Reach Zone 2 (level 13)', unlocked: false },
+  { id: 'zone_3', name: 'Zone 3 Entry', desc: 'Reach Zone 3 (level 25)', unlocked: false },
 ];
 
 // ─── Level Data ───
@@ -455,7 +466,248 @@ export function getLevels(): LevelData[] {
         return BrickType.NORMAL;
       }),
     },
+    // ─── Zone 3: Levels 25–36 ───
+    // Level 25: Vortex
+    {
+      name: 'Vortex', rows: 8, cols: 8,
+      grid: createGrid(8, 8, (r, c) => {
+        const cx = 3.5, cy = 3.5;
+        const angle = Math.atan2(r - cy, c - cx);
+        const dist = Math.sqrt((c - cx) ** 2 + (r - cy) ** 2);
+        if (dist < 1.2) return BrickType.GOLDEN;
+        if (dist < 2.5) {
+          const ring = Math.floor(angle / (Math.PI / 4)) % 3;
+          if (ring === 0) return BrickType.ARMORED;
+          if (ring === 1) return BrickType.EXPLOSIVE;
+          return BrickType.TOUGH;
+        }
+        if (dist < 3.8) return BrickType.NORMAL;
+        return -1;
+      }),
+    },
+    // Level 26: Fracture
+    {
+      name: 'Fracture', rows: 8, cols: 8,
+      grid: createGrid(8, 8, (r, c) => {
+        // Diagonal crack pattern
+        if (Math.abs(r - c) <= 0) return BrickType.GOLDEN;
+        if (Math.abs(r - c) === 1) return BrickType.EXPLOSIVE;
+        if (Math.abs(r - (7 - c)) <= 0) return BrickType.GOLDEN;
+        if (Math.abs(r - (7 - c)) === 1) return BrickType.EXPLOSIVE;
+        if (r === 0 || r === 7) return BrickType.INDESTRUCTIBLE;
+        if (r <= 2) return BrickType.ARMORED;
+        return BrickType.TOUGH;
+      }),
+    },
+    // Level 27: Honeycomb
+    {
+      name: 'Honeycomb', rows: 7, cols: 8,
+      grid: createGrid(7, 8, (r, c) => {
+        const off = r % 2 === 0 ? 0 : 1;
+        if ((c + off) % 3 === 0) return -1;
+        if (r === 3 && c >= 3 && c <= 4) return BrickType.GOLDEN;
+        if ((r + c) % 5 === 0) return BrickType.EXPLOSIVE;
+        if (r <= 1 || r >= 5) return BrickType.ARMORED;
+        return BrickType.TOUGH;
+      }),
+    },
+    // Level 28: Pillars
+    {
+      name: 'Pillars', rows: 8, cols: 8,
+      grid: createGrid(8, 8, (r, c) => {
+        if (c === 1 || c === 3 || c === 5) {
+          if (r === 0) return BrickType.INDESTRUCTIBLE;
+          if (r === 7) return BrickType.GOLDEN;
+          return BrickType.ARMORED;
+        }
+        if (r >= 2 && r <= 5) return BrickType.NORMAL;
+        if (r === 0 || r === 7) return BrickType.TOUGH;
+        return -1;
+      }),
+    },
+    // Level 29: Chessboard
+    {
+      name: 'Chessboard', rows: 8, cols: 8,
+      grid: createGrid(8, 8, (r, c) => {
+        const isBlack = (r + c) % 2 === 0;
+        if (!isBlack) return -1;
+        if (r === 0 || r === 7) return BrickType.ARMORED;
+        if (r === 3 || r === 4) return c >= 3 && c <= 4 ? BrickType.GOLDEN : BrickType.EXPLOSIVE;
+        return BrickType.TOUGH;
+      }),
+    },
+    // Level 30: Pyramid
+    {
+      name: 'Pyramid', rows: 8, cols: 8,
+      grid: createGrid(8, 8, (r, c) => {
+        const indent = Math.floor(r / 2);
+        if (c < indent || c >= 8 - indent) return -1;
+        if (r === 0) return BrickType.GOLDEN;
+        if (r === 7) return BrickType.INDESTRUCTIBLE;
+        if (r % 2 === 0) return BrickType.ARMORED;
+        return BrickType.TOUGH;
+      }),
+    },
+    // Level 31: Scatter
+    {
+      name: 'Scatter', rows: 8, cols: 8,
+      grid: createGrid(8, 8, (r, c) => {
+        // Pseudo-random scatter with clusters
+        const s = ((r * 13 + c * 7 + 5) % 11);
+        if (s < 2) return -1;
+        if (s === 2) return BrickType.GOLDEN;
+        if (s === 3) return BrickType.EXPLOSIVE;
+        if (s <= 5) return BrickType.ARMORED;
+        if (s <= 7) return BrickType.TOUGH;
+        return BrickType.NORMAL;
+      }),
+    },
+    // Level 32: Barricade
+    {
+      name: 'Barricade', rows: 8, cols: 8,
+      grid: createGrid(8, 8, (r, c) => {
+        if (r === 1 || r === 3 || r === 5) return BrickType.INDESTRUCTIBLE;
+        if (r === 0) return BrickType.GOLDEN;
+        if (r === 2 && (c === 0 || c === 1)) return -1;
+        if (r === 4 && (c === 6 || c === 7)) return -1;
+        if (r === 6 && (c === 0 || c === 1)) return -1;
+        if (r === 7) return BrickType.EXPLOSIVE;
+        return BrickType.TOUGH;
+      }),
+    },
+    // Level 33: DNA
+    {
+      name: 'DNA', rows: 8, cols: 8,
+      grid: createGrid(8, 8, (r, c) => {
+        // Double helix pattern
+        const wave1 = 3.5 + Math.sin(r * 0.9) * 2.5;
+        const wave2 = 3.5 - Math.sin(r * 0.9) * 2.5;
+        const onStrand1 = Math.abs(c - wave1) < 0.8;
+        const onStrand2 = Math.abs(c - wave2) < 0.8;
+        if (onStrand1 && onStrand2) return BrickType.GOLDEN;
+        if (onStrand1) return BrickType.ARMORED;
+        if (onStrand2) return BrickType.ARMORED;
+        // Connecting rungs every 2 rows
+        if (r % 2 === 0) {
+          const minC = Math.min(Math.round(wave1), Math.round(wave2));
+          const maxC = Math.max(Math.round(wave1), Math.round(wave2));
+          if (c >= minC && c <= maxC) return BrickType.NORMAL;
+        }
+        return -1;
+      }),
+    },
+    // Level 34: Fortress II
+    {
+      name: 'Fortress II', rows: 8, cols: 8,
+      grid: createGrid(8, 8, (r, c) => {
+        // Concentric fortress walls
+        if (r === 0 || r === 7 || c === 0 || c === 7) return BrickType.INDESTRUCTIBLE;
+        if (r === 1 || r === 6 || c === 1 || c === 6) return BrickType.ARMORED;
+        if (r === 2 || r === 5 || c === 2 || c === 5) return BrickType.TOUGH;
+        if (r === 3 && c === 3) return BrickType.GOLDEN;
+        if (r === 3 && c === 4) return BrickType.GOLDEN;
+        if (r === 4 && c === 3) return BrickType.GOLDEN;
+        if (r === 4 && c === 4) return BrickType.EXPLOSIVE;
+        return -1;
+      }),
+    },
+    // Level 35: Countdown
+    {
+      name: 'Countdown', rows: 8, cols: 8,
+      grid: createGrid(8, 8, (r, c) => {
+        // Dense final challenge
+        if (r === 0) return c % 2 === 0 ? BrickType.INDESTRUCTIBLE : BrickType.GOLDEN;
+        if (r === 7) return c % 2 === 0 ? BrickType.GOLDEN : BrickType.INDESTRUCTIBLE;
+        if ((r + c) % 4 === 0) return BrickType.EXPLOSIVE;
+        if (r <= 2) return BrickType.ARMORED;
+        if (r >= 5) return BrickType.ARMORED;
+        return BrickType.TOUGH;
+      }),
+    },
+    // Level 36: Singularity
+    {
+      name: 'Singularity', rows: 8, cols: 8,
+      grid: createGrid(8, 8, (r, c) => {
+        // Ultimate final level: everything at max difficulty
+        const cx = 3.5, cy = 3.5;
+        const dist = Math.sqrt((c - cx) ** 2 + (r - cy) ** 2);
+        if (dist < 1) return BrickType.GOLDEN;
+        if (dist < 2 && (r + c) % 2 === 0) return BrickType.EXPLOSIVE;
+        if (dist < 2) return BrickType.ARMORED;
+        if (dist < 3) return BrickType.TOUGH;
+        if ((r === 0 || r === 7) && (c === 0 || c === 7)) return BrickType.INDESTRUCTIBLE;
+        return BrickType.ARMORED;
+      }),
+    },
   ];
+}
+
+// Boss levels occur at levels 12, 24, 36
+export function getBossLevels(): Record<number, BossData> {
+  return {
+    12: {
+      name: 'Endgame Boss', rows: 6, cols: 8,
+      grid: createGrid(6, 8, (r, c) => {
+        if (r === 0) return BrickType.INDESTRUCTIBLE;
+        if (r === 1 && (c === 3 || c === 4)) return BrickType.GOLDEN;
+        if (r === 1) return BrickType.ARMORED;
+        if (r === 2 && (c === 2 || c === 5)) return BrickType.EXPLOSIVE;
+        if (r === 2) return BrickType.TOUGH;
+        if (r >= 3) return BrickType.NORMAL;
+        return BrickType.NORMAL;
+      }),
+      movePattern: 'horizontal', moveSpeed: 0.3, moveRange: 0.15,
+    },
+    24: {
+      name: 'Omega Boss', rows: 7, cols: 8,
+      grid: createGrid(7, 8, (r, c) => {
+        if (r === 0 && (c === 0 || c === 7)) return BrickType.INDESTRUCTIBLE;
+        if (r === 0) return BrickType.ARMORED;
+        if (r === 1) return BrickType.TOUGH;
+        if (r === 2 && (c === 2 || c === 5)) return BrickType.EXPLOSIVE;
+        if (r === 3 && (c === 3 || c === 4)) return BrickType.GOLDEN;
+        if (r >= 4) return BrickType.NORMAL;
+        return BrickType.TOUGH;
+      }),
+      movePattern: 'vertical', moveSpeed: 0.25, moveRange: 0.12,
+    },
+    36: {
+      name: 'Singularity Boss', rows: 8, cols: 8,
+      grid: createGrid(8, 8, (r, c) => {
+        const cx = 3.5, cy = 3.5;
+        const dist = Math.sqrt((c - cx) ** 2 + (r - cy) ** 2);
+        if (dist < 1.2) return BrickType.GOLDEN;
+        if ((r + c) % 3 === 0) return BrickType.EXPLOSIVE;
+        if (r === 0 || r === 7) return BrickType.INDESTRUCTIBLE;
+        return BrickType.ARMORED;
+      }),
+      movePattern: 'circular', moveSpeed: 0.2, moveRange: 0.08,
+    },
+  };
+}
+
+// ─── Challenge Modifiers ───
+export enum ChallengeModifier {
+  SHRINKING_PADDLE = 'shrinking_paddle',
+  SPEED_SURGE = 'speed_surge',
+  NO_POWERUPS = 'no_powerups',
+}
+
+export const MODIFIER_INFO: Record<ChallengeModifier, { name: string; desc: string; xpMult: number }> = {
+  [ChallengeModifier.SHRINKING_PADDLE]: { name: 'Shrinking Paddle', desc: 'Paddle shrinks 5% each brick', xpMult: 1.3 },
+  [ChallengeModifier.SPEED_SURGE]: { name: 'Speed Surge', desc: 'Ball speeds up every 10s', xpMult: 1.3 },
+  [ChallengeModifier.NO_POWERUPS]: { name: 'No Power-Ups', desc: 'Power-ups are disabled', xpMult: 1.4 },
+};
+
+// ─── Boss Level Data ───
+export interface BossData {
+  name: string;
+  rows: number;
+  cols: number;
+  grid: BrickType[][];
+  movePattern: 'horizontal' | 'vertical' | 'circular';
+  moveSpeed: number; // units per second
+  moveRange: number; // amplitude
 }
 
 // ─── Playfield Constants ───
@@ -500,6 +752,8 @@ export class GameStateManager {
   selectedTheme = 0;
   difficulty: 'easy' | 'medium' | 'hard' = 'medium';
   mode: 'classic' | 'endless' | 'timeattack' | 'zen' | 'daily' = 'classic';
+  activeModifiers: Set<ChallengeModifier> = new Set();
+  bossesDefeated: Set<number> = new Set();
   masterVolume = 0.7;
   sfxVolume = 0.8;
   musicVolume = 0.5;
@@ -525,6 +779,8 @@ export class GameStateManager {
         this.sfxVolume = vols.sfx ?? 0.8;
         this.musicVolume = vols.music ?? 0.5;
       }
+      const b = localStorage.getItem('neon-breaker-bosses');
+      if (b) this.bossesDefeated = new Set(JSON.parse(b));
     } catch { /* ignore */ }
   }
 
@@ -533,6 +789,7 @@ export class GameStateManager {
       localStorage.setItem('neon-breaker-achievements', JSON.stringify(this.achievements));
       localStorage.setItem('neon-breaker-leaderboard', JSON.stringify(this.leaderboard));
       localStorage.setItem('neon-breaker-theme', String(this.selectedTheme));
+      localStorage.setItem('neon-breaker-bosses', JSON.stringify([...this.bossesDefeated]));
       localStorage.setItem('neon-breaker-volumes', JSON.stringify({
         master: this.masterVolume, sfx: this.sfxVolume, music: this.musicVolume,
       }));
@@ -572,6 +829,15 @@ export class GameStateManager {
     this.fireballHits = 0;
     this.explosiveChains = 0;
     this.shieldSaves = 0;
+    // Modifiers persist across reset (set before startLevel)
+  }
+
+  getModifierXPMultiplier(): number {
+    let mult = 1.0;
+    for (const mod of this.activeModifiers) {
+      mult *= MODIFIER_INFO[mod].xpMult;
+    }
+    return mult;
   }
 
   getDifficultyMultiplier(): number {

@@ -10,7 +10,8 @@ import {
 import type { UIKitDocument } from '@iwsdk/core';
 import {
   GameState, GameStateManager, BrickType, BRICK_HP, BRICK_POINTS, PowerUpType,
-  THEMES, ACHIEVEMENTS, getLevels, LevelData,
+  THEMES, ACHIEVEMENTS, getLevels, LevelData, getBossLevels, BossData,
+  ChallengeModifier, MODIFIER_INFO,
   FIELD_WIDTH, FIELD_HEIGHT, FIELD_Y_OFFSET, FIELD_Z,
   PADDLE_WIDTH, PADDLE_HEIGHT, PADDLE_DEPTH, PADDLE_Y, PADDLE_Z,
   BALL_RADIUS, BALL_SPEED, BRICK_W, BRICK_H, BRICK_D,
@@ -55,6 +56,15 @@ let gameStartTime = 0;
 let levelBallsLost = 0;
 let levelPowerupsUsed = 0;
 let levelExplosiveChains = 0;
+
+// Boss & screen shake
+let currentBoss: BossData | null = null;
+let bossTime = 0;
+let brickGroup: Group | null = null;
+let screenShakeAmount = 0;
+let screenShakeDecay = 0;
+let speedSurgeTimer = 0;
+let shrinkPaddleCount = 0;
 
 // UI entities
 const uiEntities: Record<string, any> = {};
@@ -116,6 +126,34 @@ function getCurrentBallSkin(): BallSkin {
 
 function getCurrentPaddleSkin(): PaddleSkin {
   return PADDLE_SKINS.find(s => s.id === profile.selectedPaddleSkin) || PADDLE_SKINS[0];
+}
+
+// ─── Screen Shake ───
+function triggerScreenShake(intensity: number) {
+  screenShakeAmount = Math.min(screenShakeAmount + intensity, 0.03);
+  screenShakeDecay = 0.15;
+}
+
+function applyScreenShake(dt: number) {
+  if (screenShakeAmount > 0) {
+    screenShakeDecay -= dt;
+    if (screenShakeDecay <= 0) {
+      screenShakeAmount *= 0.85;
+      if (screenShakeAmount < 0.0005) screenShakeAmount = 0;
+    }
+    const camera = (world as any).camera;
+    if (camera) {
+      camera.position.x += (Math.random() - 0.5) * screenShakeAmount;
+      camera.position.y += (Math.random() - 0.5) * screenShakeAmount;
+    }
+  }
+}
+
+// ─── Zone Helper ───
+function getZoneName(level: number): string {
+  if (level <= 12) return 'Zone 1';
+  if (level <= 24) return 'Zone 2';
+  return 'Zone 3';
 }
 
 // ─── Init ───
@@ -415,6 +453,9 @@ function spawnLevel(levelData: LevelData) {
 
 // ─── Power-ups ───
 function spawnPowerUp(x: number, y: number) {
+  // No power-ups modifier check
+  if (gsm.activeModifiers.has(ChallengeModifier.NO_POWERUPS)) return;
+
   const type = Math.floor(Math.random() * 7) as PowerUpType;
   const colors = ['#00ffff', '#00ff88', '#ff4444', '#4488ff', '#ffaa00', '#88ff00', '#ff8800'];
   const color = colors[type];
@@ -617,6 +658,14 @@ function destroyBrick(brick: BrickObj) {
   gsm.score += BRICK_POINTS[brick.type] * Math.min(gsm.combo, 10);
 
   audio.playBrickDestroy();
+  triggerScreenShake(0.004);
+
+  // Shrinking paddle modifier
+  if (gsm.activeModifiers.has(ChallengeModifier.SHRINKING_PADDLE)) {
+    shrinkPaddleCount++;
+    paddleWidthMult = Math.max(0.4, paddleWidthMult * 0.95);
+    updatePaddleScale();
+  }
 
   const colors: Record<number, string> = {
     [BrickType.NORMAL]: THEMES[gsm.selectedTheme].brick1,
@@ -629,6 +678,7 @@ function destroyBrick(brick: BrickObj) {
 
   if (brick.type === BrickType.EXPLOSIVE) {
     audio.playExplosion();
+    triggerScreenShake(0.015);
     spawnParticles(brick.x, brick.y, '#ff4400', 15);
     let chainCount = 0;
     for (const b of activeBricks) {
@@ -664,10 +714,12 @@ function destroyBrick(brick: BrickObj) {
   if (gsm.combo >= 10) checkAchievement('combo_10');
   if (gsm.combo >= 25) checkAchievement('combo_25');
   if (gsm.combo >= 50) checkAchievement('combo_50');
+  if (gsm.combo >= 100) checkAchievement('combo_100');
   if (gsm.score >= 10000) checkAchievement('score_10k');
   if (gsm.score >= 50000) checkAchievement('score_50k');
   if (gsm.score >= 100000) checkAchievement('score_100k');
   if (gsm.score >= 500000) checkAchievement('score_500k');
+  if (gsm.score >= 1000000) checkAchievement('score_1m');
 
   updateHUD();
 
@@ -725,6 +777,48 @@ function gameUpdate(dt: number) {
   if (gsm.state !== 'playing') return;
 
   updatePaddleFromInput();
+  applyScreenShake(dt);
+
+  // Boss brick movement
+  if (currentBoss && brickGroup) {
+    bossTime += dt;
+    const boss = currentBoss;
+    switch (boss.movePattern) {
+      case 'horizontal':
+        brickGroup.position.x = Math.sin(bossTime * boss.moveSpeed * Math.PI * 2) * boss.moveRange;
+        break;
+      case 'vertical':
+        brickGroup.position.y = Math.sin(bossTime * boss.moveSpeed * Math.PI * 2) * boss.moveRange;
+        break;
+      case 'circular':
+        brickGroup.position.x = Math.sin(bossTime * boss.moveSpeed * Math.PI * 2) * boss.moveRange;
+        brickGroup.position.y = Math.cos(bossTime * boss.moveSpeed * Math.PI * 2) * boss.moveRange * 0.5;
+        break;
+    }
+    // Update actual brick positions for collision
+    for (const brick of activeBricks) {
+      if (brick.active) {
+        brick.mesh.position.x = brick.x + brickGroup.position.x;
+        brick.mesh.position.y = brick.y + brickGroup.position.y;
+        brick.edges.position.copy(brick.mesh.position);
+        brick.glow.position.copy(brick.mesh.position);
+      }
+    }
+  }
+
+  // Speed surge modifier
+  if (gsm.activeModifiers.has(ChallengeModifier.SPEED_SURGE)) {
+    speedSurgeTimer += dt;
+    if (speedSurgeTimer >= 10) {
+      speedSurgeTimer = 0;
+      activeBalls.forEach(b => {
+        if (b.active) {
+          b.vx *= 1.08;
+          b.vy *= 1.08;
+        }
+      });
+    }
+  }
 
   // Timers
   if (wideTimer > 0) {
@@ -1003,15 +1097,39 @@ function startLevel() {
   levelExplosiveChains = 0;
 
   const levels = getLevels();
+  const bossLevels = getBossLevels();
   let levelData: LevelData;
+
+  // Reset boss state
+  currentBoss = null;
+  bossTime = 0;
+  if (brickGroup) {
+    brickGroup.position.set(0, 0, 0);
+    brickGroup = null;
+  }
+  speedSurgeTimer = 0;
+  shrinkPaddleCount = 0;
 
   if (gsm.mode === 'daily') {
     // Generate daily challenge level from seed
     levelData = generateDailyLevel();
+  } else if (bossLevels[gsm.level]) {
+    // Boss level
+    const boss = bossLevels[gsm.level];
+    levelData = { name: boss.name, rows: boss.rows, cols: boss.cols, grid: boss.grid };
+    currentBoss = boss;
+    brickGroup = new Group();
+    world.scene.add(brickGroup);
+    audio.playBossIntro();
+    showToast('⚠ BOSS LEVEL ⚠');
   } else {
     const levelIdx = ((gsm.level - 1) % levels.length);
     levelData = levels[levelIdx];
   }
+
+  // Zone achievements
+  if (gsm.level >= 13) checkAchievement('zone_2');
+  if (gsm.level >= 25) checkAchievement('zone_3');
 
   spawnLevel(levelData);
 
@@ -1058,6 +1176,7 @@ function onLevelComplete() {
 
   const elapsed = (Date.now() - gsm.levelStartTime) / 1000;
   if (elapsed < 30) checkAchievement('speed_clear');
+  if (elapsed < 15) checkAchievement('speed_15');
   if (levelBallsLost === 0) {
     checkAchievement('no_miss');
     profile.perfectLevels++;
@@ -1069,8 +1188,23 @@ function onLevelComplete() {
   if (gsm.level >= 10) checkAchievement('level_10');
   if (gsm.level >= 20) checkAchievement('level_20');
   if (gsm.level >= 24) checkAchievement('level_24');
+  if (gsm.level >= 36) checkAchievement('level_36');
 
   if (gsm.mode === 'endless' && gsm.level >= 50) checkAchievement('endless_50');
+
+  // Boss defeat
+  const bossLevels = getBossLevels();
+  if (bossLevels[gsm.level]) {
+    gsm.bossesDefeated.add(gsm.level);
+    gsm.savePersistence();
+    checkAchievement('boss_slayer');
+    if (gsm.bossesDefeated.size >= 3) checkAchievement('boss_master');
+    triggerScreenShake(0.02);
+  }
+
+  // Modifier achievements
+  if (gsm.activeModifiers.size >= 1) checkAchievement('modifier_1');
+  if (gsm.activeModifiers.size >= 3) checkAchievement('modifier_3');
 
   showUI('levelcomplete');
   updateLevelComplete();
@@ -1083,7 +1217,8 @@ function onGameOver() {
 
   // Calculate and award XP
   const levelsCleared = gsm.level - 1;
-  const xpEarned = calculateGameXP(gsm.score, gsm.bricksDestroyed, levelsCleared, gsm.maxCombo, gsm.mode);
+  let xpEarned = calculateGameXP(gsm.score, gsm.bricksDestroyed, levelsCleared, gsm.maxCombo, gsm.mode);
+  xpEarned = Math.floor(xpEarned * gsm.getModifierXPMultiplier());
   const oldLevel = profile.level;
   profile.xp += xpEarned;
   profile.level = getLevelFromXP(profile.xp);
@@ -1245,6 +1380,7 @@ function setupUI() {
     { name: 'ballskins', config: '/ui/ballskins.json', maxW: 0.9, maxH: 0.9, mode: 'world', pos: [0, 1.5, -2] },
     { name: 'paddleskins', config: '/ui/paddleskins.json', maxW: 0.9, maxH: 0.8, mode: 'world', pos: [0, 1.5, -2] },
     { name: 'levelup', config: '/ui/levelup.json', maxW: 0.5, maxH: 0.3, mode: 'hud', offset: [0, 0.1, -0.6] },
+    { name: 'modifiers', config: '/ui/modifiers.json', maxW: 0.8, maxH: 0.7, mode: 'world', pos: [0, 1.5, -2] },
   ];
 
   for (const p of panels) {
@@ -1370,12 +1506,10 @@ function wireUIEvents() {
         diffDoc.getElementById(d.id)?.addEventListener('click', () => {
           audio.playButtonClick();
           gsm.difficulty = d.diff;
-          hideAllUI();
-          gsm.resetGame();
-          gsm.themesUsed.add(gsm.selectedTheme);
-          if (gsm.themesUsed.size >= 5) checkAchievement('all_themes');
-          gameStartTime = Date.now();
-          startLevel();
+          hideUI('difficulty');
+          gsm.activeModifiers.clear();
+          showUI('modifiers');
+          updateModifiers();
         });
       }
       diffDoc.getElementById('btn-back')?.addEventListener('click', () => { audio.playButtonClick(); hideUI('difficulty'); showUI('modeselect'); });
@@ -1492,6 +1626,40 @@ function wireUIEvents() {
       }
     } else { allReady = false; }
 
+    // Modifiers
+    const modDoc = getDoc('modifiers');
+    if (modDoc) {
+      modDoc.getElementById('btn-mod-shrink')?.addEventListener('click', () => {
+        audio.playButtonClick();
+        toggleModifier(ChallengeModifier.SHRINKING_PADDLE);
+        updateModifiers();
+      });
+      modDoc.getElementById('btn-mod-speed')?.addEventListener('click', () => {
+        audio.playButtonClick();
+        toggleModifier(ChallengeModifier.SPEED_SURGE);
+        updateModifiers();
+      });
+      modDoc.getElementById('btn-mod-nopow')?.addEventListener('click', () => {
+        audio.playButtonClick();
+        toggleModifier(ChallengeModifier.NO_POWERUPS);
+        updateModifiers();
+      });
+      modDoc.getElementById('btn-mod-start')?.addEventListener('click', () => {
+        audio.playButtonClick();
+        hideAllUI();
+        gsm.resetGame();
+        gsm.themesUsed.add(gsm.selectedTheme);
+        if (gsm.themesUsed.size >= 5) checkAchievement('all_themes');
+        gameStartTime = Date.now();
+        startLevel();
+      });
+      modDoc.getElementById('btn-mod-back')?.addEventListener('click', () => {
+        audio.playButtonClick();
+        hideUI('modifiers');
+        showUI('difficulty');
+      });
+    } else { allReady = false; }
+
     if (allReady) {
       eventsWired = true;
     } else {
@@ -1529,8 +1697,16 @@ function updateCountdown() {
 function updateLevelComplete() {
   const doc = getDoc('levelcomplete');
   const levels = getLevels();
-  const levelName = gsm.mode === 'daily' ? 'Daily Challenge' : levels[(gsm.level - 1) % levels.length].name;
-  setText(doc, 'level-name', levelName);
+  const bossLevels = getBossLevels();
+  let levelName: string;
+  if (gsm.mode === 'daily') {
+    levelName = 'Daily Challenge';
+  } else if (bossLevels[gsm.level]) {
+    levelName = bossLevels[gsm.level].name;
+  } else {
+    levelName = levels[(gsm.level - 1) % levels.length].name;
+  }
+  setText(doc, 'level-name', `${getZoneName(gsm.level)} — ${levelName}`);
   setText(doc, 'score-val', String(gsm.score));
   setText(doc, 'combo-val', `Best: x${gsm.maxCombo}`);
 }
@@ -1647,6 +1823,28 @@ function updateLevelUp(newLevel: number, xpEarned: number, oldLevel: number) {
   } else {
     setText(doc, 'levelup-unlock', '');
   }
+}
+
+// ─── Modifier Helpers ───
+function toggleModifier(mod: ChallengeModifier) {
+  if (gsm.activeModifiers.has(mod)) {
+    gsm.activeModifiers.delete(mod);
+  } else {
+    gsm.activeModifiers.add(mod);
+  }
+}
+
+function updateModifiers() {
+  const doc = getDoc('modifiers');
+  if (!doc) return;
+  const shrinkOn = gsm.activeModifiers.has(ChallengeModifier.SHRINKING_PADDLE);
+  const speedOn = gsm.activeModifiers.has(ChallengeModifier.SPEED_SURGE);
+  const nopowOn = gsm.activeModifiers.has(ChallengeModifier.NO_POWERUPS);
+  setText(doc, 'mod-shrink-text', `${shrinkOn ? '[*]' : '[ ]'} Shrinking Paddle (+30% XP)`);
+  setText(doc, 'mod-speed-text', `${speedOn ? '[*]' : '[ ]'} Speed Surge (+30% XP)`);
+  setText(doc, 'mod-nopow-text', `${nopowOn ? '[*]' : '[ ]'} No Power-Ups (+40% XP)`);
+  const mult = gsm.getModifierXPMultiplier();
+  setText(doc, 'mod-xp-bonus', `XP Bonus: x${mult.toFixed(1)}`);
 }
 
 // ─── Toast ───

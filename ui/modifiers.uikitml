@@ -1,0 +1,32 @@
+<panel>
+  <column gap="8" alignItems="center" padding="16">
+    <text id="mod-title" fontSize="22" fontWeight="bold" color="#00ffff">CHALLENGE MODIFIERS</text>
+    <text fontSize="12" color="#88aacc">Enable for bonus XP. Stack up to 3!</text>
+    <column gap="6" width="280">
+      <row gap="8" alignItems="center">
+        <button id="btn-mod-shrink" width="260" height="36">
+          <text id="mod-shrink-text" fontSize="13" color="#ffffff">[ ] Shrinking Paddle (+30% XP)</text>
+        </button>
+      </row>
+      <row gap="8" alignItems="center">
+        <button id="btn-mod-speed" width="260" height="36">
+          <text id="mod-speed-text" fontSize="13" color="#ffffff">[ ] Speed Surge (+30% XP)</text>
+        </button>
+      </row>
+      <row gap="8" alignItems="center">
+        <button id="btn-mod-nopow" width="260" height="36">
+          <text id="mod-nopow-text" fontSize="13" color="#ffffff">[ ] No Power-Ups (+40% XP)</text>
+        </button>
+      </row>
+    </column>
+    <text id="mod-xp-bonus" fontSize="14" color="#ffcc00">XP Bonus: x1.0</text>
+    <row gap="12">
+      <button id="btn-mod-start" width="120" height="40">
+        <text fontSize="16" fontWeight="bold" color="#00ff88">START</text>
+      </button>
+      <button id="btn-mod-back" width="100" height="40">
+        <text fontSize="14" color="#ff6666">BACK</text>
+      </button>
+    </row>
+  </column>
+</panel>
