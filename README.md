@@ -41,14 +41,24 @@ A holodeck-style brick breaker game built with [IWSDK](https://iwsdk.dev) 0.4.1.
 - 7 paddle skins (Hologram, Crystal, Ember, Aurora, Quantum, Singularity)
 - Skins unlock at specific progression levels
 
-### 50 Achievements
+### 60 Achievements
 - Combo milestones (5x → 100x)
-- Score milestones (10K → 1M)
+- Score milestones (10K → 2M)
 - Boss defeats, modifier challenges, zone completions
 - Speed clears, perfect levels, daily challenges
+- Campaign completion, power-up chains, consecutive perfects
+
+### Campaign Victory
+- Complete all 36 levels in Classic mode for a special victory celebration
+- 1.5x XP campaign bonus on completion
+- Fireworks, screen shake, boss defeat fanfare
+
+### Active Power-Up HUD
+- Real-time display of active power-ups with countdown timers
+- Head-locked panel visible in VR and browser
 
 ### Visual & Audio
-- 5 arena themes: Neon Holodeck, Crimson Grid, Toxic Neon, Ultra Violet, Solar Blaze
+- 8 arena themes: Neon Holodeck, Crimson Grid, Toxic Neon, Ultra Violet, Solar Blaze, Frozen Abyss, Void Pulse, Emerald Matrix
 - Procedural Web Audio: 15+ SFX, evolving arpeggiator music, ambient drone
 - Screen shake on impacts and explosions
 - Particle effects, glow trails, wireframe decorations

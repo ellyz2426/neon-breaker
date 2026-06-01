@@ -26,6 +26,9 @@ export interface PlayerProfile {
   selectedPaddleSkin: string;
   dailyChallengeDate: string;
   dailyChallengeScore: number;
+  bestScoreByMode: Record<string, number>;
+  totalModifierLevels: number;
+  campaignCompleted: boolean;
 }
 
 // XP required for each level (cumulative thresholds)
@@ -211,6 +214,9 @@ export function loadProfile(): PlayerProfile {
         selectedPaddleSkin: p.selectedPaddleSkin ?? 'default',
         dailyChallengeDate: p.dailyChallengeDate ?? '',
         dailyChallengeScore: p.dailyChallengeScore ?? 0,
+        bestScoreByMode: p.bestScoreByMode ?? {},
+        totalModifierLevels: p.totalModifierLevels ?? 0,
+        campaignCompleted: p.campaignCompleted ?? false,
       };
     }
   } catch { /* ignore */ }
@@ -223,6 +229,7 @@ export function loadProfile(): PlayerProfile {
     unlockedBallSkins: ['default'], unlockedPaddleSkins: ['default'],
     selectedBallSkin: 'default', selectedPaddleSkin: 'default',
     dailyChallengeDate: '', dailyChallengeScore: 0,
+    bestScoreByMode: {}, totalModifierLevels: 0, campaignCompleted: false,
   };
 }
 

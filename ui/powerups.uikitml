@@ -1,0 +1,9 @@
+<template>
+  <panel id="powerups-root" background="#00000088" borderRadius="8" padding="6" gap="3">
+    <text id="pu-title" fontSize="10" color="#00ffff" fontWeight="bold">ACTIVE</text>
+    <text id="pu-0" fontSize="9" color="#88ffff"></text>
+    <text id="pu-1" fontSize="9" color="#88ffff"></text>
+    <text id="pu-2" fontSize="9" color="#88ffff"></text>
+    <text id="pu-3" fontSize="9" color="#88ffff"></text>
+  </panel>
+</template>

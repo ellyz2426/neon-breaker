@@ -57,6 +57,17 @@ let levelBallsLost = 0;
 let levelPowerupsUsed = 0;
 let levelExplosiveChains = 0;
 
+// Active power-up timers for HUD display
+interface ActivePowerUpTimer {
+  type: PowerUpType;
+  remaining: number;
+  total: number;
+}
+const activePowerUpTimers: ActivePowerUpTimer[] = [];
+
+// Combo visual escalation state
+let comboGlowIntensity = 0;
+
 // Boss & screen shake
 let currentBoss: BossData | null = null;
 let bossTime = 0;
@@ -126,6 +137,73 @@ function getCurrentBallSkin(): BallSkin {
 
 function getCurrentPaddleSkin(): PaddleSkin {
   return PADDLE_SKINS.find(s => s.id === profile.selectedPaddleSkin) || PADDLE_SKINS[0];
+}
+
+// ─── Power-Up Timer Tracking ───
+function trackPowerUpTimer(type: PowerUpType, duration: number) {
+  const existing = activePowerUpTimers.find(t => t.type === type);
+  if (existing) {
+    existing.remaining = duration;
+    existing.total = duration;
+  } else {
+    activePowerUpTimers.push({ type, remaining: duration, total: duration });
+  }
+  updatePowerUpHUD();
+}
+
+function updatePowerUpTimers(dt: number) {
+  for (let i = activePowerUpTimers.length - 1; i >= 0; i--) {
+    activePowerUpTimers[i].remaining -= dt;
+    if (activePowerUpTimers[i].remaining <= 0) {
+      activePowerUpTimers.splice(i, 1);
+    }
+  }
+  if (activePowerUpTimers.length > 0) {
+    showUI('powerups');
+    updatePowerUpHUD();
+  } else {
+    hideUI('powerups');
+  }
+}
+
+function updatePowerUpHUD() {
+  const doc = getDoc('powerups');
+  if (!doc) return;
+  for (let i = 0; i < 4; i++) {
+    if (i < activePowerUpTimers.length) {
+      const t = activePowerUpTimers[i];
+      const name = getPowerUpName(t.type);
+      const secs = Math.ceil(t.remaining);
+      setText(doc, `pu-${i}`, `${name} ${secs}s`);
+    } else {
+      setText(doc, `pu-${i}`, '');
+    }
+  }
+}
+
+// ─── Combo Visual Escalation ───
+function updateComboVisuals(combo: number) {
+  // Escalate glow intensity based on combo
+  comboGlowIntensity = Math.min(combo * 0.05, 1.5);
+
+  // At high combos, intensify the paddle glow
+  if (paddleGlow) {
+    const mat = paddleGlow.material as MeshBasicMaterial;
+    mat.opacity = 0.2 + comboGlowIntensity * 0.3;
+  }
+
+  // Spawn bonus particles at combo thresholds
+  if (combo === 10 || combo === 25 || combo === 50 || combo === 100) {
+    const theme = THEMES[gsm.selectedTheme];
+    for (let i = 0; i < combo / 5; i++) {
+      spawnParticles(
+        paddleMesh.position.x + (Math.random() - 0.5) * 0.5,
+        PADDLE_Y + 0.2,
+        theme.accent, 5
+      );
+    }
+    triggerScreenShake(0.005 + combo * 0.0002);
+  }
 }
 
 // ─── Screen Shake ───
@@ -488,6 +566,13 @@ function applyPowerUp(pu: PowerUpObj) {
   audio.playPowerUp();
   showToast(getPowerUpName(pu.type) + '!');
 
+  // Track timestamps for power-up chain achievement
+  const now = Date.now();
+  gsm.powerUpTimestamps.push(now);
+  // Keep only last 10 seconds
+  gsm.powerUpTimestamps = gsm.powerUpTimestamps.filter(t => now - t <= 10000);
+  if (gsm.powerUpTimestamps.length >= 3) checkAchievement('powerup_chain');
+
   switch (pu.type) {
     case PowerUpType.MULTI_BALL: {
       const existing = activeBalls.find(b => b.active);
@@ -507,10 +592,12 @@ function applyPowerUp(pu: PowerUpObj) {
       paddleWidthMult = 1.5;
       wideTimer = 15;
       updatePaddleScale();
+      trackPowerUpTimer(PowerUpType.WIDE_PADDLE, 15);
       break;
     case PowerUpType.LASER:
       hasLaser = true;
       laserTimer = 10;
+      trackPowerUpTimer(PowerUpType.LASER, 10);
       break;
     case PowerUpType.SHIELD:
       hasShield = true;
@@ -534,10 +621,12 @@ function applyPowerUp(pu: PowerUpObj) {
       activeBalls.forEach(b => {
         if (b.active) { b.vx *= 0.7; b.vy *= 0.7; }
       });
+      trackPowerUpTimer(PowerUpType.SLOW, 12);
       break;
     case PowerUpType.FIREBALL:
       hasFireball = true;
       fireballTimer = 8;
+      trackPowerUpTimer(PowerUpType.FIREBALL, 8);
       activeBalls.forEach(b => {
         if (b.active) {
           (b.mesh.material as MeshStandardMaterial).emissive.set('#ff4400');
@@ -659,6 +748,7 @@ function destroyBrick(brick: BrickObj) {
 
   audio.playBrickDestroy();
   triggerScreenShake(0.004);
+  updateComboVisuals(gsm.combo);
 
   // Shrinking paddle modifier
   if (gsm.activeModifiers.has(ChallengeModifier.SHRINKING_PADDLE)) {
@@ -778,6 +868,7 @@ function gameUpdate(dt: number) {
 
   updatePaddleFromInput();
   applyScreenShake(dt);
+  updatePowerUpTimers(dt);
 
   // Boss brick movement
   if (currentBoss && brickGroup) {
@@ -1095,6 +1186,8 @@ function startLevel() {
   levelBallsLost = 0;
   levelPowerupsUsed = 0;
   levelExplosiveChains = 0;
+  activePowerUpTimers.length = 0;
+  hideUI('powerups');
 
   const levels = getLevels();
   const bossLevels = getBossLevels();
@@ -1192,6 +1285,27 @@ function onLevelComplete() {
 
   if (gsm.mode === 'endless' && gsm.level >= 50) checkAchievement('endless_50');
 
+  // Track consecutive perfect levels
+  if (levelBallsLost === 0) {
+    gsm.consecutivePerfectLevels++;
+    if (gsm.consecutivePerfectLevels >= 5) checkAchievement('no_miss_5');
+  } else {
+    gsm.consecutivePerfectLevels = 0;
+  }
+
+  // Track level completion times for speed run
+  gsm.levelStartTimes.push(elapsed);
+  if (gsm.levelStartTimes.length >= 10) {
+    const last10Sum = gsm.levelStartTimes.slice(-10).reduce((a, b) => a + b, 0);
+    if (last10Sum < 300) checkAchievement('speed_run_10');
+  }
+
+  // Track triple modifier levels
+  if (gsm.activeModifiers.size >= 3) {
+    gsm.tripleModifierLevels++;
+    if (gsm.tripleModifierLevels >= 3) checkAchievement('triple_modifier');
+  }
+
   // Boss defeat
   const bossLevels = getBossLevels();
   if (bossLevels[gsm.level]) {
@@ -1199,6 +1313,7 @@ function onLevelComplete() {
     gsm.savePersistence();
     checkAchievement('boss_slayer');
     if (gsm.bossesDefeated.size >= 3) checkAchievement('boss_master');
+    if (levelBallsLost === 0) checkAchievement('all_bosses_no_miss');
     triggerScreenShake(0.02);
   }
 
@@ -1208,6 +1323,18 @@ function onLevelComplete() {
 
   showUI('levelcomplete');
   updateLevelComplete();
+
+  // Campaign victory — completed all 36 levels in Classic
+  if (gsm.mode === 'classic' && gsm.level >= 36) {
+    checkAchievement('campaign_victory');
+    profile.campaignCompleted = true;
+    saveProfile(profile);
+    setTimeout(() => {
+      hideUI('levelcomplete');
+      gsm.state = 'gameover'; // prevent further level progression
+      onCampaignVictory();
+    }, 2500);
+  }
 }
 
 function onGameOver() {
@@ -1236,6 +1363,22 @@ function onGameOver() {
   profile.laserHits += gsm.laserHits;
   profile.fireballHits += gsm.fireballHits;
   profile.shieldSaves += gsm.shieldSaves;
+
+  // Per-mode best scores
+  const modeKey = gsm.mode;
+  if (!profile.bestScoreByMode[modeKey] || gsm.score > profile.bestScoreByMode[modeKey]) {
+    profile.bestScoreByMode[modeKey] = gsm.score;
+  }
+
+  // Track modifier levels
+  if (gsm.activeModifiers.size >= 3) {
+    profile.totalModifierLevels += gsm.tripleModifierLevels;
+  }
+
+  // Theme tracking
+  gsm.themesUsed.add(gsm.selectedTheme);
+  if (gsm.themesUsed.size >= 8) checkAchievement('all_themes_used');
+  if (gsm.themesUsed.size >= 5) checkAchievement('all_themes');
 
   // Daily challenge tracking
   if (gsm.mode === 'daily') {
@@ -1277,8 +1420,11 @@ function onGameOver() {
   if (profile.level >= 50) checkAchievement('xp_level_50');
   if (profile.totalGames >= 10) checkAchievement('games_10');
   if (profile.totalGames >= 50) checkAchievement('games_50');
+  if (profile.totalGames >= 100) checkAchievement('games_100');
   if (profile.totalBricks >= 500) checkAchievement('bricks_500');
   if (profile.totalBricks >= 2000) checkAchievement('bricks_2000');
+  if (profile.totalBricks >= 5000) checkAchievement('bricks_5000');
+  if (profile.totalScore >= 2000000) checkAchievement('score_2m');
 
   saveProfile(profile);
 
@@ -1293,6 +1439,70 @@ function onGameOver() {
       setTimeout(() => hideUI('levelup'), 3000);
     }, 1500);
   }
+}
+
+// ─── Campaign Victory ───
+function onCampaignVictory() {
+  const levelsCleared = 36;
+  let xpEarned = calculateGameXP(gsm.score, gsm.bricksDestroyed, levelsCleared, gsm.maxCombo, gsm.mode);
+  xpEarned = Math.floor(xpEarned * gsm.getModifierXPMultiplier() * 1.5); // 50% campaign bonus
+  const oldLevel = profile.level;
+  profile.xp += xpEarned;
+  profile.level = getLevelFromXP(profile.xp);
+
+  // Award all game-end stats
+  profile.totalGames++;
+  profile.totalBricks += gsm.bricksDestroyed;
+  profile.totalScore += gsm.score;
+  profile.totalPlayTime += (Date.now() - gameStartTime) / 1000;
+  if (gsm.score > profile.bestScore) profile.bestScore = gsm.score;
+  if (gsm.maxCombo > profile.bestCombo) profile.bestCombo = gsm.maxCombo;
+  profile.bestLevel = 36;
+  profile.gamesWon++;
+  if (!profile.bestScoreByMode['classic'] || gsm.score > profile.bestScoreByMode['classic']) {
+    profile.bestScoreByMode['classic'] = gsm.score;
+  }
+  saveProfile(profile);
+  gsm.addToLeaderboard();
+
+  // Show victory screen
+  showUI('victory');
+  const totalTime = (Date.now() - gameStartTime) / 1000;
+  const mins = Math.floor(totalTime / 60);
+  const secs = Math.floor(totalTime % 60);
+  updateVictory(gsm.score, `${mins}m ${secs}s`, gsm.maxCombo, xpEarned);
+
+  // Celebratory particles
+  for (let i = 0; i < 10; i++) {
+    setTimeout(() => {
+      const theme = THEMES[gsm.selectedTheme];
+      spawnParticles(
+        (Math.random() - 0.5) * FIELD_WIDTH,
+        FIELD_Y_OFFSET + Math.random() * FIELD_HEIGHT,
+        i % 2 === 0 ? theme.accent : '#ffd700', 12
+      );
+      triggerScreenShake(0.003);
+    }, i * 200);
+  }
+
+  audio.playBossDefeat();
+
+  // Level up if applicable
+  if (profile.level > oldLevel) {
+    setTimeout(() => {
+      showUI('levelup');
+      updateLevelUp(profile.level, xpEarned, oldLevel);
+      setTimeout(() => hideUI('levelup'), 3000);
+    }, 2000);
+  }
+}
+
+function updateVictory(score: number, time: string, combo: number, xp: number) {
+  const doc = getDoc('victory');
+  setText(doc, 'victory-score', `Score: ${score.toLocaleString()}`);
+  setText(doc, 'victory-time', `Time: ${time}`);
+  setText(doc, 'victory-combo', `Best Combo: x${combo}`);
+  setText(doc, 'victory-xp', `+${xp} XP (1.5x Campaign Bonus!)`);
 }
 
 // ─── Input ───
@@ -1381,6 +1591,8 @@ function setupUI() {
     { name: 'paddleskins', config: '/ui/paddleskins.json', maxW: 0.9, maxH: 0.8, mode: 'world', pos: [0, 1.5, -2] },
     { name: 'levelup', config: '/ui/levelup.json', maxW: 0.5, maxH: 0.3, mode: 'hud', offset: [0, 0.1, -0.6] },
     { name: 'modifiers', config: '/ui/modifiers.json', maxW: 0.8, maxH: 0.7, mode: 'world', pos: [0, 1.5, -2] },
+    { name: 'powerups', config: '/ui/powerups.json', maxW: 0.25, maxH: 0.12, mode: 'hud', offset: [-0.2, 0.12, -0.5] },
+    { name: 'victory', config: '/ui/victory.json', maxW: 0.9, maxH: 0.9, mode: 'world', pos: [0, 1.5, -2] },
   ];
 
   for (const p of panels) {
@@ -1650,6 +1862,7 @@ function wireUIEvents() {
         gsm.resetGame();
         gsm.themesUsed.add(gsm.selectedTheme);
         if (gsm.themesUsed.size >= 5) checkAchievement('all_themes');
+        if (gsm.themesUsed.size >= 8) checkAchievement('all_themes_used');
         gameStartTime = Date.now();
         startLevel();
       });
@@ -1657,6 +1870,17 @@ function wireUIEvents() {
         audio.playButtonClick();
         hideUI('modifiers');
         showUI('difficulty');
+      });
+    } else { allReady = false; }
+
+    // Victory
+    const vicDoc = getDoc('victory');
+    if (vicDoc) {
+      vicDoc.getElementById('btn-victory-title')?.addEventListener('click', () => {
+        audio.playButtonClick(); hideAllUI(); gsm.state = 'title'; showUI('title'); updateTitleLevel();
+      });
+      vicDoc.getElementById('btn-victory-play')?.addEventListener('click', () => {
+        audio.playButtonClick(); hideAllUI(); gsm.resetGame(); gameStartTime = Date.now(); startLevel();
       });
     } else { allReady = false; }
 
@@ -1771,6 +1995,15 @@ function updateProfile() {
   setText(doc, 'stat-perfect', String(profile.perfectLevels));
   setText(doc, 'stat-won', String(profile.gamesWon));
   setText(doc, 'stat-daily', String(profile.dailyChallengesCompleted));
+  // Per-mode best scores
+  const modes = ['classic', 'endless', 'timeattack', 'zen', 'daily'];
+  const modeLabels = ['Classic', 'Endless', 'Time Atk', 'Zen', 'Daily'];
+  let modeStr = '';
+  for (let i = 0; i < modes.length; i++) {
+    const best = profile.bestScoreByMode[modes[i]];
+    if (best) modeStr += `${modeLabels[i]}: ${best.toLocaleString()} | `;
+  }
+  setText(doc, 'stat-modes', modeStr.slice(0, -3) || 'No scores yet');
 }
 
 function updateBallSkins() {

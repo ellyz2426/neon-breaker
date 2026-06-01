@@ -1,0 +1,19 @@
+<template>
+  <panel id="victory-root" background="#000000cc" borderRadius="12" padding="20" gap="8" alignItems="center">
+    <text id="victory-title" fontSize="28" color="#ffd700" fontWeight="bold">★ VICTORY ★</text>
+    <text id="victory-sub" fontSize="14" color="#ffffff">All 36 Levels Complete!</text>
+    <text id="victory-score" fontSize="16" color="#00ffff"></text>
+    <text id="victory-time" fontSize="12" color="#88ccff"></text>
+    <text id="victory-combo" fontSize="12" color="#88ccff"></text>
+    <text id="victory-xp" fontSize="14" color="#ffaa00"></text>
+    <text id="victory-msg" fontSize="11" color="#aaffaa">You conquered every zone and defeated all bosses.</text>
+    <panel flexDirection="row" gap="16" marginTop="8">
+      <panel id="btn-victory-title" background="#00446688" borderRadius="6" padding="8" paddingLeft="16" paddingRight="16" cursor="pointer" hover:background="#00668888">
+        <text fontSize="13" color="#ffffff" fontWeight="bold">TITLE</text>
+      </panel>
+      <panel id="btn-victory-play" background="#22664488" borderRadius="6" padding="8" paddingLeft="16" paddingRight="16" cursor="pointer" hover:background="#44886688">
+        <text fontSize="13" color="#ffffff" fontWeight="bold">PLAY AGAIN</text>
+      </panel>
+    </panel>
+  </panel>
+</template>

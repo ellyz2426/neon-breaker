@@ -91,6 +91,24 @@ export const THEMES: ArenaTheme[] = [
     brick1: '#ff8800', brick2: '#ffcc00', brick3: '#ff4400',
     paddle: '#ff8800', ball: '#ffeecc', glow: '#ff8800', fog: '#0a0400',
   },
+  {
+    name: 'Frozen Abyss',
+    wall: '#001a1a', floor: '#000d0d', accent: '#44ddff',
+    brick1: '#44ddff', brick2: '#88eeff', brick3: '#0088aa',
+    paddle: '#44ddff', ball: '#ddeeff', glow: '#44ddff', fog: '#000808',
+  },
+  {
+    name: 'Void Pulse',
+    wall: '#0a000a', floor: '#050005', accent: '#cc00ff',
+    brick1: '#cc00ff', brick2: '#8800aa', brick3: '#ff44ff',
+    paddle: '#cc00ff', ball: '#eeccff', glow: '#cc00ff', fog: '#030003',
+  },
+  {
+    name: 'Emerald Matrix',
+    wall: '#001a0d', floor: '#000d06', accent: '#00ff66',
+    brick1: '#00ff66', brick2: '#44ffaa', brick3: '#00cc44',
+    paddle: '#00ff66', ball: '#ccffdd', glow: '#00ff66', fog: '#000a04',
+  },
 ];
 
 // ─── Achievements ───
@@ -155,6 +173,17 @@ export const ACHIEVEMENTS: Achievement[] = [
   { id: 'speed_15', name: 'Lightning Clear', desc: 'Clear a level in under 15 seconds', unlocked: false },
   { id: 'zone_2', name: 'Zone 2 Entry', desc: 'Reach Zone 2 (level 13)', unlocked: false },
   { id: 'zone_3', name: 'Zone 3 Entry', desc: 'Reach Zone 3 (level 25)', unlocked: false },
+  // Round 4: Advanced achievements
+  { id: 'campaign_victory', name: 'Campaign Complete', desc: 'Beat all 36 levels in Classic mode', unlocked: false },
+  { id: 'all_bosses_no_miss', name: 'Flawless Commander', desc: 'Defeat a boss without losing a ball', unlocked: false },
+  { id: 'triple_modifier', name: 'Iron Will', desc: 'Complete 3 levels with all modifiers active', unlocked: false },
+  { id: 'speed_run_10', name: 'Blitz Run', desc: 'Clear 10 levels in under 5 minutes total', unlocked: false },
+  { id: 'all_themes_used', name: 'World Traveler', desc: 'Play a game in all 8 arena themes', unlocked: false },
+  { id: 'no_miss_5', name: 'Perfect Streak', desc: 'Clear 5 consecutive levels without losing a ball', unlocked: false },
+  { id: 'score_2m', name: 'Double Millionaire', desc: 'Score 2,000,000 points total', unlocked: false },
+  { id: 'bricks_5000', name: 'Demolition King', desc: 'Destroy 5,000 bricks total', unlocked: false },
+  { id: 'games_100', name: 'Century Player', desc: 'Play 100 games', unlocked: false },
+  { id: 'powerup_chain', name: 'Power Surge', desc: 'Collect 3 power-ups in 10 seconds', unlocked: false },
 ];
 
 // ─── Level Data ───
@@ -754,6 +783,11 @@ export class GameStateManager {
   mode: 'classic' | 'endless' | 'timeattack' | 'zen' | 'daily' = 'classic';
   activeModifiers: Set<ChallengeModifier> = new Set();
   bossesDefeated: Set<number> = new Set();
+  consecutivePerfectLevels = 0;
+  tripleModifierLevels = 0;
+  lastPowerUpTime = 0;
+  powerUpTimestamps: number[] = [];
+  levelStartTimes: number[] = [];
   masterVolume = 0.7;
   sfxVolume = 0.8;
   musicVolume = 0.5;
@@ -829,6 +863,11 @@ export class GameStateManager {
     this.fireballHits = 0;
     this.explosiveChains = 0;
     this.shieldSaves = 0;
+    this.consecutivePerfectLevels = 0;
+    this.tripleModifierLevels = 0;
+    this.lastPowerUpTime = 0;
+    this.powerUpTimestamps = [];
+    this.levelStartTimes = [];
     // Modifiers persist across reset (set before startLevel)
   }
 

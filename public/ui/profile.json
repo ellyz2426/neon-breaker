@@ -464,6 +464,30 @@
                       "justifyContent": "space-between"
                     },
                     "dataUid": "uid-39"
+                  },
+                  {
+                    "sourceTag": "text",
+                    "type": "custom",
+                    "children": [
+                      "─── Best by Mode ───"
+                    ],
+                    "properties": {
+                      "fontSize": "11",
+                      "color": "#888888",
+                      "marginTop": "6"
+                    },
+                    "dataUid": "uid-42"
+                  },
+                  {
+                    "sourceTag": "text",
+                    "type": "custom",
+                    "children": [],
+                    "properties": {
+                      "id": "stat-modes",
+                      "fontSize": "11",
+                      "color": "#ffaa88"
+                    },
+                    "dataUid": "uid-43"
                   }
                 ],
                 "properties": {
@@ -488,7 +512,7 @@
                       "fontWeight": "bold",
                       "color": "#00ffff"
                     },
-                    "dataUid": "uid-43"
+                    "dataUid": "uid-45"
                   }
                 ],
                 "properties": {
@@ -503,7 +527,7 @@
                   "cursor": "pointer",
                   "marginTop": "8"
                 },
-                "dataUid": "uid-42"
+                "dataUid": "uid-44"
               }
             ],
             "properties": {
@@ -548,7 +572,7 @@
         "column": 0
       },
       "end": {
-        "line": 33,
+        "line": 35,
         "column": 0
       }
     },
@@ -568,7 +592,7 @@
         "column": 2
       },
       "end": {
-        "line": 33,
+        "line": 35,
         "column": 0
       }
     },
@@ -618,7 +642,7 @@
         "column": 2
       },
       "end": {
-        "line": 32,
+        "line": 34,
         "column": 8
       }
     },
@@ -648,7 +672,7 @@
         "column": 2
       },
       "end": {
-        "line": 27,
+        "line": 29,
         "column": 10
       }
     },
@@ -954,21 +978,41 @@
     },
     "uid-42": {
       "start": {
-        "line": 29,
-        "column": 2
+        "line": 27,
+        "column": 4
       },
       "end": {
-        "line": 31,
-        "column": 10
+        "line": 27,
+        "column": 83
       }
     },
     "uid-43": {
       "start": {
-        "line": 30,
+        "line": 28,
         "column": 4
       },
       "end": {
-        "line": 30,
+        "line": 28,
+        "column": 64
+      }
+    },
+    "uid-44": {
+      "start": {
+        "line": 31,
+        "column": 2
+      },
+      "end": {
+        "line": 33,
+        "column": 10
+      }
+    },
+    "uid-45": {
+      "start": {
+        "line": 32,
+        "column": 4
+      },
+      "end": {
+        "line": 32,
         "column": 71
       }
     }
