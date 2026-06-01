@@ -1,0 +1,54 @@
+<panel>
+  <col gap="6" alignItems="center" padding="10">
+    <text id="practice-title" fontSize="16" fontWeight="bold" color="#00ffff">PRACTICE - SELECT LEVEL</text>
+    <text id="practice-info" fontSize="9" color="#888888">Play any unlocked level. No XP awarded.</text>
+    <col gap="3" alignItems="stretch" width="100%">
+      <text id="zone-1-header" fontSize="11" fontWeight="bold" color="#00ff88">Zone 1 (L1-12)</text>
+      <row gap="4" justifyContent="center" flexWrap="wrap">
+        <text id="plv-1" fontSize="10" color="#00ffff" backgroundColor="#001a33" padding="4">1</text>
+        <text id="plv-2" fontSize="10" color="#00ffff" backgroundColor="#001a33" padding="4">2</text>
+        <text id="plv-3" fontSize="10" color="#00ffff" backgroundColor="#001a33" padding="4">3</text>
+        <text id="plv-4" fontSize="10" color="#00ffff" backgroundColor="#001a33" padding="4">4</text>
+        <text id="plv-5" fontSize="10" color="#00ffff" backgroundColor="#001a33" padding="4">5</text>
+        <text id="plv-6" fontSize="10" color="#00ffff" backgroundColor="#001a33" padding="4">6</text>
+        <text id="plv-7" fontSize="10" color="#00ffff" backgroundColor="#001a33" padding="4">7</text>
+        <text id="plv-8" fontSize="10" color="#00ffff" backgroundColor="#001a33" padding="4">8</text>
+        <text id="plv-9" fontSize="10" color="#00ffff" backgroundColor="#001a33" padding="4">9</text>
+        <text id="plv-10" fontSize="10" color="#00ffff" backgroundColor="#001a33" padding="4">10</text>
+        <text id="plv-11" fontSize="10" color="#00ffff" backgroundColor="#001a33" padding="4">11</text>
+        <text id="plv-12" fontSize="10" color="#00ffff" backgroundColor="#001a33" padding="4">12</text>
+      </row>
+      <text id="zone-2-header" fontSize="11" fontWeight="bold" color="#ff8800">Zone 2 (L13-24)</text>
+      <row gap="4" justifyContent="center" flexWrap="wrap">
+        <text id="plv-13" fontSize="10" color="#ff8800" backgroundColor="#1a0d00" padding="4">13</text>
+        <text id="plv-14" fontSize="10" color="#ff8800" backgroundColor="#1a0d00" padding="4">14</text>
+        <text id="plv-15" fontSize="10" color="#ff8800" backgroundColor="#1a0d00" padding="4">15</text>
+        <text id="plv-16" fontSize="10" color="#ff8800" backgroundColor="#1a0d00" padding="4">16</text>
+        <text id="plv-17" fontSize="10" color="#ff8800" backgroundColor="#1a0d00" padding="4">17</text>
+        <text id="plv-18" fontSize="10" color="#ff8800" backgroundColor="#1a0d00" padding="4">18</text>
+        <text id="plv-19" fontSize="10" color="#ff8800" backgroundColor="#1a0d00" padding="4">19</text>
+        <text id="plv-20" fontSize="10" color="#ff8800" backgroundColor="#1a0d00" padding="4">20</text>
+        <text id="plv-21" fontSize="10" color="#ff8800" backgroundColor="#1a0d00" padding="4">21</text>
+        <text id="plv-22" fontSize="10" color="#ff8800" backgroundColor="#1a0d00" padding="4">22</text>
+        <text id="plv-23" fontSize="10" color="#ff8800" backgroundColor="#1a0d00" padding="4">23</text>
+        <text id="plv-24" fontSize="10" color="#ff8800" backgroundColor="#1a0d00" padding="4">24</text>
+      </row>
+      <text id="zone-3-header" fontSize="11" fontWeight="bold" color="#aa44ff">Zone 3 (L25-36)</text>
+      <row gap="4" justifyContent="center" flexWrap="wrap">
+        <text id="plv-25" fontSize="10" color="#aa44ff" backgroundColor="#0d001a" padding="4">25</text>
+        <text id="plv-26" fontSize="10" color="#aa44ff" backgroundColor="#0d001a" padding="4">26</text>
+        <text id="plv-27" fontSize="10" color="#aa44ff" backgroundColor="#0d001a" padding="4">27</text>
+        <text id="plv-28" fontSize="10" color="#aa44ff" backgroundColor="#0d001a" padding="4">28</text>
+        <text id="plv-29" fontSize="10" color="#aa44ff" backgroundColor="#0d001a" padding="4">29</text>
+        <text id="plv-30" fontSize="10" color="#aa44ff" backgroundColor="#0d001a" padding="4">30</text>
+        <text id="plv-31" fontSize="10" color="#aa44ff" backgroundColor="#0d001a" padding="4">31</text>
+        <text id="plv-32" fontSize="10" color="#aa44ff" backgroundColor="#0d001a" padding="4">32</text>
+        <text id="plv-33" fontSize="10" color="#aa44ff" backgroundColor="#0d001a" padding="4">33</text>
+        <text id="plv-34" fontSize="10" color="#aa44ff" backgroundColor="#0d001a" padding="4">34</text>
+        <text id="plv-35" fontSize="10" color="#aa44ff" backgroundColor="#0d001a" padding="4">35</text>
+        <text id="plv-36" fontSize="10" color="#aa44ff" backgroundColor="#0d001a" padding="4">36</text>
+      </row>
+    </col>
+    <text id="btn-practice-back" fontSize="12" fontWeight="bold" color="#00ffff" padding="8">BACK</text>
+  </col>
+</panel>

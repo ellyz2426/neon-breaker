@@ -1,0 +1,25 @@
+<panel>
+  <col gap="6" alignItems="center" padding="12">
+    <text id="tutorial-title" fontSize="18" fontWeight="bold" color="#00ffff">TUTORIAL</text>
+    <text id="tut-1" fontSize="10" color="#ffffff">Move the paddle left/right to bounce the ball.</text>
+    <text id="tut-2" fontSize="10" color="#cccccc">Destroy all breakable bricks to clear a level.</text>
+    <text id="tut-3" fontSize="10" color="#cccccc">Catch falling power-ups for special abilities:</text>
+    <text id="tut-4" fontSize="9" color="#00ffff">  MULTI-BALL: Splits into 3 balls</text>
+    <text id="tut-5" fontSize="9" color="#00ff88">  WIDE PADDLE: 1.5x wider (15s)</text>
+    <text id="tut-6" fontSize="9" color="#ff4444">  LASER: Shoot lasers (10s)</text>
+    <text id="tut-7" fontSize="9" color="#4488ff">  SHIELD: Floor safety net (1 use)</text>
+    <text id="tut-8" fontSize="9" color="#ffaa00">  MAGNET: Ball sticks to paddle</text>
+    <text id="tut-9" fontSize="9" color="#88ff00">  SLOW-MO: Ball speed -30% (12s)</text>
+    <text id="tut-10" fontSize="9" color="#ff8800">  FIREBALL: Ball passes through (8s)</text>
+    <text id="tut-11" fontSize="9" color="#ff00ff">  MEGA BALL: 3x ball size (10s)</text>
+    <text id="tut-12" fontSize="10" color="#cccccc">Brick types: Normal, Tough (2 hits), Armored (3),</text>
+    <text id="tut-13" fontSize="10" color="#cccccc">Explosive (chain), Golden (drops power-up), Steel.</text>
+    <text id="tut-14" fontSize="10" color="#ffff00">Build combos for score multipliers up to x10!</text>
+    <text id="tut-15" fontSize="10" color="#cccccc">XR: Use controller to aim paddle position.</text>
+    <text id="tut-16" fontSize="10" color="#cccccc">Browser: Mouse/WASD/Arrow keys + Click.</text>
+    <row gap="12" justifyContent="center">
+      <text id="btn-tut-play" fontSize="12" fontWeight="bold" color="#000000" backgroundColor="#00ffff" padding="8">START GAME</text>
+      <text id="btn-tut-back" fontSize="12" fontWeight="bold" color="#00ffff" padding="8">BACK</text>
+    </row>
+  </col>
+</panel>

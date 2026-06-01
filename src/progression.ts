@@ -83,6 +83,8 @@ export function calculateGameXP(score: number, bricksDestroyed: number, levelsCl
   if (mode === 'timeattack') xp = Math.floor(xp * 1.5);
   if (mode === 'zen') xp = Math.floor(xp * 0.5);
   if (mode === 'daily') xp = Math.floor(xp * 2.0);
+  if (mode === 'survival') xp = Math.floor(xp * 1.8);
+  if (mode === 'practice') xp = 0; // no XP in practice
   return xp;
 }
 

@@ -4,6 +4,7 @@
   .label { font-size: 1; color: #888888; }
   .value { font-size: 2; color: #00ffff; font-weight: bold; }
   .combo-value { font-size: 1.8; color: #ff8800; font-weight: bold; }
+  .wave-value { font-size: 1.6; color: #ff4400; font-weight: bold; }
 </style>
 <div class="hud">
   <div class="hud-group">
@@ -17,6 +18,9 @@
   <div class="hud-group">
     <span class="label">LEVEL</span>
     <span id="level-val" class="value">1</span>
+  </div>
+  <div class="hud-group">
+    <span id="wave-val" class="wave-value"></span>
   </div>
   <div class="hud-group">
     <span id="combo-val" class="combo-value"></span>

@@ -4,7 +4,7 @@
 export type GameState =
   | 'title' | 'modeselect' | 'difficulty' | 'playing' | 'paused'
   | 'gameover' | 'leaderboard' | 'achievements' | 'settings' | 'help'
-  | 'levelcomplete' | 'countdown';
+  | 'levelcomplete' | 'countdown' | 'tutorial' | 'practiceselect';
 
 // ─── Brick Types ───
 export enum BrickType {
@@ -43,6 +43,7 @@ export enum PowerUpType {
   MAGNET = 4,       // Ball sticks to paddle
   SLOW = 5,         // Ball speed -30% for 12s
   FIREBALL = 6,     // Ball passes through bricks for 8s
+  MEGA_BALL = 7,    // Ball becomes 3x size for 10s
 }
 
 // ─── Arena Themes ───
@@ -184,6 +185,21 @@ export const ACHIEVEMENTS: Achievement[] = [
   { id: 'bricks_5000', name: 'Demolition King', desc: 'Destroy 5,000 bricks total', unlocked: false },
   { id: 'games_100', name: 'Century Player', desc: 'Play 100 games', unlocked: false },
   { id: 'powerup_chain', name: 'Power Surge', desc: 'Collect 3 power-ups in 10 seconds', unlocked: false },
+  // Round 5: Survival & advanced achievements
+  { id: 'survival_wave_5', name: 'Wave Rider', desc: 'Survive 5 waves in Survival mode', unlocked: false },
+  { id: 'survival_wave_10', name: 'Storm Chaser', desc: 'Survive 10 waves in Survival mode', unlocked: false },
+  { id: 'survival_wave_20', name: 'Apocalypse Survivor', desc: 'Survive 20 waves in Survival mode', unlocked: false },
+  { id: 'survival_score_50k', name: 'Survival Scorer', desc: 'Score 50,000 in Survival mode', unlocked: false },
+  { id: 'survival_score_200k', name: 'Survival Legend', desc: 'Score 200,000 in Survival mode', unlocked: false },
+  { id: 'mega_ball_50', name: 'Mega Crusher', desc: 'Destroy 50 bricks with Mega Ball', unlocked: false },
+  { id: 'mega_ball_chain', name: 'Wrecking Ball', desc: 'Destroy 10+ bricks with one Mega Ball', unlocked: false },
+  { id: 'practice_complete', name: 'Practice Champion', desc: 'Complete any level in Practice mode', unlocked: false },
+  { id: 'all_modes', name: 'Jack of All Modes', desc: 'Play all 7 game modes at least once', unlocked: false },
+  { id: 'score_5m', name: 'Five Million Club', desc: 'Score 5,000,000 points total', unlocked: false },
+  { id: 'bricks_10000', name: 'Brick Annihilator', desc: 'Destroy 10,000 bricks total', unlocked: false },
+  { id: 'combo_200', name: 'Combo Transcendent', desc: 'Reach a 200x combo', unlocked: false },
+  { id: 'survival_no_powerup', name: 'Survival Purist', desc: 'Survive 5 waves without collecting power-ups', unlocked: false },
+  { id: 'tutorial_complete', name: 'Student', desc: 'Complete the tutorial', unlocked: false },
 ];
 
 // ─── Level Data ───
@@ -780,7 +796,7 @@ export class GameStateManager {
   shieldSaves = 0;
   selectedTheme = 0;
   difficulty: 'easy' | 'medium' | 'hard' = 'medium';
-  mode: 'classic' | 'endless' | 'timeattack' | 'zen' | 'daily' = 'classic';
+  mode: 'classic' | 'endless' | 'timeattack' | 'zen' | 'daily' | 'survival' | 'practice' = 'classic';
   activeModifiers: Set<ChallengeModifier> = new Set();
   bossesDefeated: Set<number> = new Set();
   consecutivePerfectLevels = 0;
@@ -788,6 +804,13 @@ export class GameStateManager {
   lastPowerUpTime = 0;
   powerUpTimestamps: number[] = [];
   levelStartTimes: number[] = [];
+  survivalWave = 0;
+  survivalBricksInWave = 0;
+  survivalSpawnTimer = 0;
+  megaBallHits = 0;
+  megaBallSessionHits = 0;
+  modesPlayed: Set<string> = new Set();
+  practiceLevel = 1;
   masterVolume = 0.7;
   sfxVolume = 0.8;
   musicVolume = 0.5;
@@ -815,6 +838,8 @@ export class GameStateManager {
       }
       const b = localStorage.getItem('neon-breaker-bosses');
       if (b) this.bossesDefeated = new Set(JSON.parse(b));
+      const mp = localStorage.getItem('neon-breaker-modes-played');
+      if (mp) this.modesPlayed = new Set(JSON.parse(mp));
     } catch { /* ignore */ }
   }
 
@@ -824,6 +849,7 @@ export class GameStateManager {
       localStorage.setItem('neon-breaker-leaderboard', JSON.stringify(this.leaderboard));
       localStorage.setItem('neon-breaker-theme', String(this.selectedTheme));
       localStorage.setItem('neon-breaker-bosses', JSON.stringify([...this.bossesDefeated]));
+      localStorage.setItem('neon-breaker-modes-played', JSON.stringify([...this.modesPlayed]));
       localStorage.setItem('neon-breaker-volumes', JSON.stringify({
         master: this.masterVolume, sfx: this.sfxVolume, music: this.musicVolume,
       }));
@@ -849,7 +875,7 @@ export class GameStateManager {
 
   resetGame() {
     this.score = 0;
-    this.lives = this.mode === 'zen' ? 99 : 3;
+    this.lives = this.mode === 'zen' ? 99 : this.mode === 'survival' ? 1 : 3;
     this.level = 1;
     this.combo = 0;
     this.maxCombo = 0;
@@ -868,6 +894,11 @@ export class GameStateManager {
     this.lastPowerUpTime = 0;
     this.powerUpTimestamps = [];
     this.levelStartTimes = [];
+    this.survivalWave = 0;
+    this.survivalBricksInWave = 0;
+    this.survivalSpawnTimer = 0;
+    this.megaBallHits = 0;
+    this.megaBallSessionHits = 0;
     // Modifiers persist across reset (set before startLevel)
   }
 
