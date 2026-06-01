@@ -1,0 +1,882 @@
+{
+  "element": {
+    "type": "container",
+    "sourceTag": "div",
+    "children": [
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "HOW TO PLAY"
+        ],
+        "properties": {
+          "class": "heading"
+        },
+        "dataUid": "uid-2"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "Browser Controls"
+        ],
+        "properties": {
+          "class": "section"
+        },
+        "dataUid": "uid-3"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "Mouse: Move paddle left/right"
+        ],
+        "properties": {
+          "class": "text"
+        },
+        "dataUid": "uid-4"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "A/D or Arrows: Move paddle"
+        ],
+        "properties": {
+          "class": "text"
+        },
+        "dataUid": "uid-5"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "Click: Release magnet / Fire laser"
+        ],
+        "properties": {
+          "class": "text"
+        },
+        "dataUid": "uid-6"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "ESC: Pause"
+        ],
+        "properties": {
+          "class": "text"
+        },
+        "dataUid": "uid-7"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "VR Controls"
+        ],
+        "properties": {
+          "class": "section"
+        },
+        "dataUid": "uid-8"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "Right Controller: Move paddle"
+        ],
+        "properties": {
+          "class": "text"
+        },
+        "dataUid": "uid-9"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "Trigger: Release magnet / Fire laser"
+        ],
+        "properties": {
+          "class": "text"
+        },
+        "dataUid": "uid-10"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "B: Pause"
+        ],
+        "properties": {
+          "class": "text"
+        },
+        "dataUid": "uid-11"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "Laser Pointer: UI interaction"
+        ],
+        "properties": {
+          "class": "text"
+        },
+        "dataUid": "uid-12"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "Brick Types"
+        ],
+        "properties": {
+          "class": "section"
+        },
+        "dataUid": "uid-13"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "Normal (cyan): 1 hit, 100 pts"
+        ],
+        "properties": {
+          "class": "text"
+        },
+        "dataUid": "uid-14"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "Tough (magenta): 2 hits, 200 pts"
+        ],
+        "properties": {
+          "class": "text"
+        },
+        "dataUid": "uid-15"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "Armored (green): 3 hits, 300 pts"
+        ],
+        "properties": {
+          "class": "text"
+        },
+        "dataUid": "uid-16"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "Explosive (orange): Destroys neighbors"
+        ],
+        "properties": {
+          "class": "text"
+        },
+        "dataUid": "uid-17"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "Golden (gold): Always drops power-up"
+        ],
+        "properties": {
+          "class": "text"
+        },
+        "dataUid": "uid-18"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "Indestructible (gray): Cannot break"
+        ],
+        "properties": {
+          "class": "text"
+        },
+        "dataUid": "uid-19"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "Power-Ups"
+        ],
+        "properties": {
+          "class": "section"
+        },
+        "dataUid": "uid-20"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "Multi-Ball: Splits into 3 balls"
+        ],
+        "properties": {
+          "class": "text"
+        },
+        "dataUid": "uid-21"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "Wide Paddle: 1.5x wider (15s)"
+        ],
+        "properties": {
+          "class": "text"
+        },
+        "dataUid": "uid-22"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "Laser: Shoot bricks (10s)"
+        ],
+        "properties": {
+          "class": "text"
+        },
+        "dataUid": "uid-23"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "Shield: Floor barrier (1 use)"
+        ],
+        "properties": {
+          "class": "text"
+        },
+        "dataUid": "uid-24"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "Magnet: Ball sticks to paddle"
+        ],
+        "properties": {
+          "class": "text"
+        },
+        "dataUid": "uid-25"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "Slow-Mo: Ball speed -30% (12s)"
+        ],
+        "properties": {
+          "class": "text"
+        },
+        "dataUid": "uid-26"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "Fireball: Ball passes through (8s)"
+        ],
+        "properties": {
+          "class": "text"
+        },
+        "dataUid": "uid-27"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "Mega Ball: 3x ball size (10s)"
+        ],
+        "properties": {
+          "class": "text"
+        },
+        "dataUid": "uid-28"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "Paddle Abilities"
+        ],
+        "properties": {
+          "class": "section"
+        },
+        "dataUid": "uid-29"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "Dash (Shift): Quick speed burst, 0.8s CD"
+        ],
+        "properties": {
+          "class": "text"
+        },
+        "dataUid": "uid-30"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "Slam (X): Shockwave damages bricks, 2s CD"
+        ],
+        "properties": {
+          "class": "text"
+        },
+        "dataUid": "uid-31"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "Game Modes (8)"
+        ],
+        "properties": {
+          "class": "section"
+        },
+        "dataUid": "uid-32"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "Classic • Endless • Time Attack • Zen"
+        ],
+        "properties": {
+          "class": "text"
+        },
+        "dataUid": "uid-33"
+      },
+      {
+        "sourceTag": "span",
+        "type": "custom",
+        "children": [
+          "Daily • Survival • Practice • Boss Rush"
+        ],
+        "properties": {
+          "class": "text"
+        },
+        "dataUid": "uid-34"
+      },
+      {
+        "type": "container",
+        "sourceTag": "div",
+        "children": [
+          {
+            "sourceTag": "span",
+            "type": "custom",
+            "children": [
+              "BACK"
+            ],
+            "properties": {
+              "class": "back-text"
+            },
+            "dataUid": "uid-36"
+          }
+        ],
+        "properties": {
+          "id": "btn-back",
+          "class": "btn-back"
+        },
+        "dataUid": "uid-35"
+      }
+    ],
+    "properties": {
+      "class": "panel"
+    },
+    "dataUid": "uid-1"
+  },
+  "classes": {
+    "panel": {
+      "content": {
+        "display": "flex",
+        "flexDirection": "column",
+        "paddingTop": "2",
+        "paddingBottom": "2",
+        "paddingLeft": "3",
+        "paddingRight": "3",
+        "backgroundColor": "rgba(0,0,0,0.85)",
+        "borderColor": "#00ffff",
+        "borderWidth": "0.15",
+        "borderRadius": 1.5
+      }
+    },
+    "heading": {
+      "content": {
+        "fontSize": "3",
+        "color": "#00ffff",
+        "fontWeight": "bold",
+        "marginBottom": "1"
+      }
+    },
+    "section": {
+      "content": {
+        "fontSize": "1.8",
+        "color": "#ffaa00",
+        "marginTop": "1",
+        "marginBottom": "0.3",
+        "fontWeight": "bold"
+      }
+    },
+    "text": {
+      "content": {
+        "fontSize": "1.2",
+        "color": "#cccccc",
+        "marginTop": "0.2"
+      }
+    },
+    "btn-back": {
+      "content": {
+        "display": "flex",
+        "justifyContent": "center",
+        "alignItems": "center",
+        "paddingTop": "0.6",
+        "paddingBottom": "0.6",
+        "paddingLeft": "2",
+        "paddingRight": "2",
+        "marginTop": "1.5",
+        "backgroundColor": "rgba(255,255,255,0.05)",
+        "borderColor": "#666666",
+        "borderWidth": "0.05",
+        "borderRadius": 0.6,
+        "cursor": "pointer"
+      }
+    },
+    "back-text": {
+      "content": {
+        "fontSize": "1.5",
+        "color": "#888888"
+      }
+    }
+  },
+  "ranges": {
+    "panel": {
+      "start": {
+        "line": 1,
+        "column": 2
+      },
+      "end": {
+        "line": 1,
+        "column": 8
+      }
+    },
+    "heading": {
+      "start": {
+        "line": 2,
+        "column": 2
+      },
+      "end": {
+        "line": 2,
+        "column": 10
+      }
+    },
+    "section": {
+      "start": {
+        "line": 3,
+        "column": 2
+      },
+      "end": {
+        "line": 3,
+        "column": 10
+      }
+    },
+    "text": {
+      "start": {
+        "line": 4,
+        "column": 2
+      },
+      "end": {
+        "line": 4,
+        "column": 7
+      }
+    },
+    "btn-back": {
+      "start": {
+        "line": 5,
+        "column": 2
+      },
+      "end": {
+        "line": 5,
+        "column": 11
+      }
+    },
+    "back-text": {
+      "start": {
+        "line": 6,
+        "column": 2
+      },
+      "end": {
+        "line": 6,
+        "column": 12
+      }
+    },
+    "uid-1": {
+      "start": {
+        "line": 8,
+        "column": 0
+      },
+      "end": {
+        "line": 43,
+        "column": 6
+      }
+    },
+    "uid-2": {
+      "start": {
+        "line": 9,
+        "column": 2
+      },
+      "end": {
+        "line": 9,
+        "column": 42
+      }
+    },
+    "uid-3": {
+      "start": {
+        "line": 10,
+        "column": 2
+      },
+      "end": {
+        "line": 10,
+        "column": 47
+      }
+    },
+    "uid-4": {
+      "start": {
+        "line": 11,
+        "column": 2
+      },
+      "end": {
+        "line": 11,
+        "column": 57
+      }
+    },
+    "uid-5": {
+      "start": {
+        "line": 12,
+        "column": 2
+      },
+      "end": {
+        "line": 12,
+        "column": 54
+      }
+    },
+    "uid-6": {
+      "start": {
+        "line": 13,
+        "column": 2
+      },
+      "end": {
+        "line": 13,
+        "column": 62
+      }
+    },
+    "uid-7": {
+      "start": {
+        "line": 14,
+        "column": 2
+      },
+      "end": {
+        "line": 14,
+        "column": 38
+      }
+    },
+    "uid-8": {
+      "start": {
+        "line": 15,
+        "column": 2
+      },
+      "end": {
+        "line": 15,
+        "column": 42
+      }
+    },
+    "uid-9": {
+      "start": {
+        "line": 16,
+        "column": 2
+      },
+      "end": {
+        "line": 16,
+        "column": 57
+      }
+    },
+    "uid-10": {
+      "start": {
+        "line": 17,
+        "column": 2
+      },
+      "end": {
+        "line": 17,
+        "column": 64
+      }
+    },
+    "uid-11": {
+      "start": {
+        "line": 18,
+        "column": 2
+      },
+      "end": {
+        "line": 18,
+        "column": 36
+      }
+    },
+    "uid-12": {
+      "start": {
+        "line": 19,
+        "column": 2
+      },
+      "end": {
+        "line": 19,
+        "column": 57
+      }
+    },
+    "uid-13": {
+      "start": {
+        "line": 20,
+        "column": 2
+      },
+      "end": {
+        "line": 20,
+        "column": 42
+      }
+    },
+    "uid-14": {
+      "start": {
+        "line": 21,
+        "column": 2
+      },
+      "end": {
+        "line": 21,
+        "column": 57
+      }
+    },
+    "uid-15": {
+      "start": {
+        "line": 22,
+        "column": 2
+      },
+      "end": {
+        "line": 22,
+        "column": 60
+      }
+    },
+    "uid-16": {
+      "start": {
+        "line": 23,
+        "column": 2
+      },
+      "end": {
+        "line": 23,
+        "column": 60
+      }
+    },
+    "uid-17": {
+      "start": {
+        "line": 24,
+        "column": 2
+      },
+      "end": {
+        "line": 24,
+        "column": 66
+      }
+    },
+    "uid-18": {
+      "start": {
+        "line": 25,
+        "column": 2
+      },
+      "end": {
+        "line": 25,
+        "column": 64
+      }
+    },
+    "uid-19": {
+      "start": {
+        "line": 26,
+        "column": 2
+      },
+      "end": {
+        "line": 26,
+        "column": 63
+      }
+    },
+    "uid-20": {
+      "start": {
+        "line": 27,
+        "column": 2
+      },
+      "end": {
+        "line": 27,
+        "column": 40
+      }
+    },
+    "uid-21": {
+      "start": {
+        "line": 28,
+        "column": 2
+      },
+      "end": {
+        "line": 28,
+        "column": 59
+      }
+    },
+    "uid-22": {
+      "start": {
+        "line": 29,
+        "column": 2
+      },
+      "end": {
+        "line": 29,
+        "column": 57
+      }
+    },
+    "uid-23": {
+      "start": {
+        "line": 30,
+        "column": 2
+      },
+      "end": {
+        "line": 30,
+        "column": 53
+      }
+    },
+    "uid-24": {
+      "start": {
+        "line": 31,
+        "column": 2
+      },
+      "end": {
+        "line": 31,
+        "column": 57
+      }
+    },
+    "uid-25": {
+      "start": {
+        "line": 32,
+        "column": 2
+      },
+      "end": {
+        "line": 32,
+        "column": 57
+      }
+    },
+    "uid-26": {
+      "start": {
+        "line": 33,
+        "column": 2
+      },
+      "end": {
+        "line": 33,
+        "column": 58
+      }
+    },
+    "uid-27": {
+      "start": {
+        "line": 34,
+        "column": 2
+      },
+      "end": {
+        "line": 34,
+        "column": 62
+      }
+    },
+    "uid-28": {
+      "start": {
+        "line": 35,
+        "column": 2
+      },
+      "end": {
+        "line": 35,
+        "column": 57
+      }
+    },
+    "uid-29": {
+      "start": {
+        "line": 36,
+        "column": 2
+      },
+      "end": {
+        "line": 36,
+        "column": 47
+      }
+    },
+    "uid-30": {
+      "start": {
+        "line": 37,
+        "column": 2
+      },
+      "end": {
+        "line": 37,
+        "column": 68
+      }
+    },
+    "uid-31": {
+      "start": {
+        "line": 38,
+        "column": 2
+      },
+      "end": {
+        "line": 38,
+        "column": 69
+      }
+    },
+    "uid-32": {
+      "start": {
+        "line": 39,
+        "column": 2
+      },
+      "end": {
+        "line": 39,
+        "column": 45
+      }
+    },
+    "uid-33": {
+      "start": {
+        "line": 40,
+        "column": 2
+      },
+      "end": {
+        "line": 40,
+        "column": 65
+      }
+    },
+    "uid-34": {
+      "start": {
+        "line": 41,
+        "column": 2
+      },
+      "end": {
+        "line": 41,
+        "column": 67
+      }
+    },
+    "uid-35": {
+      "start": {
+        "line": 42,
+        "column": 2
+      },
+      "end": {
+        "line": 42,
+        "column": 79
+      }
+    },
+    "uid-36": {
+      "start": {
+        "line": 42,
+        "column": 38
+      },
+      "end": {
+        "line": 42,
+        "column": 73
+      }
+    }
+  }
+}
